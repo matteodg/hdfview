@@ -96,8 +96,10 @@ classifier.
 
 ### Functional Requirements
 
-- **FR-001**: The project MUST declare a dependency on **`org.hdfgroup:hdf5-native:2.2.0`** so that
-  HDF5 native material for the build is sourced from that published line.
+- **FR-001**: The project MUST declare a dependency on **`org.hdfgroup:hdf5-native:2.2.0`** (using the
+  **platform classifier** required by the published layout—e.g. **`windows-x86_64`** alongside
+  **`hdf5-java-ffm`** on 64-bit Windows) so that HDF5 native material for the build is sourced from
+  that published line.
 - **FR-002**: The project MUST declare a dependency on **`org.hdfgroup:hdf5-java-ffm:2.2.0`** with
   the **platform classifier** that matches the build target OS and CPU architecture. The user
   supplied **`windows-x86_64`** as the canonical example for 64-bit Windows; **other platforms are

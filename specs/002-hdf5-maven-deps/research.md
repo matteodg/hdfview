@@ -98,3 +98,20 @@ the local `.m2` (or Central) layout during `/speckit-implement`.
 
 - **Guess classifier on `hdf5-native`** — do not guess; read the installed POM once during
   implementation.
+
+---
+
+## 7. Verified packaging (implementation, 2026-04-26)
+
+**Source**: Local `~/.m2/repository/org/hdfgroup/` layout and upstream POMs at **2.2.0**.
+
+| Artifact | Packaging in POM | Resolved JAR on disk | `dependency:get` notes |
+|----------|-------------------|----------------------|-------------------------|
+| `hdfgroup:hdf5-native:2.2.0` | `jar` | `hdf5-native-2.2.0-windows-x86_64.jar` | Requires **`-Dclassifier=windows-x86_64`** (no default `hdf5-native-2.2.0.jar` in repo). |
+| `hdfgroup:hdf5-java-ffm:2.2.0` | `jar` | `hdf5-java-ffm-2.2.0-windows-x86_64.jar` | **`-Dclassifier=windows-x86_64`** (plus `-Dpackaging=jar`). |
+
+**Dependency graph guard (constitution III)**: **Manual** verification for this delivery—run
+`mvn -DskipTests dependency:tree -pl object` on the target OS and confirm org.hdfgroup entries show
+**2.2.0** with the expected classifier. **`jarhdf5:2.0.0`** remains on the classpath alongside the
+new line until a follow-on removes JNI; watch for incompatible duplicate `hdf5.dll` if
+`hdf5.lib.dir` points at a different HDF5 major than the FFM bundle (see README precedence).

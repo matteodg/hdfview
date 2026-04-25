@@ -138,6 +138,11 @@ mvn test -pl hdfview -Dtest=TestClassName
 - **Build System**: Maven-only (Ant build removed in Phase 1 migration)
 - **Build Properties**: External configuration loaded via properties-maven-plugin from `build.properties`
 - **Native Libraries**: HDF4/HDF5 native libraries required (paths configured in `build.properties`)
+- **HDF5 2.2.0 (org.hdfgroup, Java FFM)**: On **64-bit Windows** (`amd64` / `x86_64`), the `object`
+  module resolves **`org.hdfgroup:hdf5-native:2.2.0`** and **`org.hdfgroup:hdf5-java-ffm:2.2.0`**
+  with classifier **`windows-x86_64`** (see root `pom.xml` `dependencyManagement`). Other platforms
+  follow the same **per-platform classifier** pattern when profiles are added. Contributor flow:
+  `README.md` (overview) and **`specs/002-hdf5-maven-deps/quickstart.md`** (commands).
 - **Module System**: Disabled temporarily (non-modular build for SWT compatibility)
 
 ### Maven Plugins Integrated

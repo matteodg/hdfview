@@ -21,7 +21,7 @@ and [contracts/developer-build-resolution.md](./contracts/developer-build-resolu
 
 **Purpose**: Confirm how HDF Group publishes the artifacts before editing production POMs.
 
-- [ ] T001 Inspect `~/.m2/repository/org/hdfgroup/hdf5-native/2.2.0/` and `~/.m2/repository/org/hdfgroup/hdf5-java-ffm/2.2.0/` (POMs, JAR layout, classifier layout) and append a short **Verified packaging** subsection to `specs/002-hdf5-maven-deps/research.md` (correct `dependency:get` `-Dpackaging` for `hdf5-native`).
+- [x] T001 Inspect `~/.m2/repository/org/hdfgroup/hdf5-native/2.2.0/` and `~/.m2/repository/org/hdfgroup/hdf5-java-ffm/2.2.0/` (POMs, JAR layout, classifier layout) and append a short **Verified packaging** subsection to `specs/002-hdf5-maven-deps/research.md` (correct `dependency:get` `-Dpackaging` for `hdf5-native`).
 
 ---
 
@@ -33,10 +33,10 @@ correspondent classifiers exist for other OS/arch at **2.2.0** when additional p
 
 **Checkpoint**: No user-story work until this phase completes.
 
-- [ ] T002 Add properties `hdfgroup.hdf5.native.version` and `hdfgroup.hdf5.java.ffm.version` (both `2.2.0`) and `<dependencyManagement>` for `org.hdfgroup:hdf5-native` and **`org.hdfgroup:hdf5-java-ffm`** with **per-platform classifiers** (minimum: **`windows-x86_64`**; add **correspondent** managed entries when other platform artifacts are confirmed in `pom.xml`, exact versions, no ranges).
-- [ ] T003 Add a **Windows + amd64/x86_64**–activated `<profile>` in `object/pom.xml` with compile-scoped `<dependency>` elements referencing the managed coordinates for **`windows-x86_64`** (no version ranges); **mirror the same pattern** for other OS/arch when their classifiers are wired.
-- [ ] T004 On a runner where **only** the default (non-Windows) profile is active, run `mvn -q -DskipTests validate` **and** `mvn -q -DskipTests dependency:tree -pl object` at the repository root; iterate `object/pom.xml` profile `activation` until **neither** output lists **`hdf5-java-ffm`** with classifier **`windows-x86_64`** (or any **inactive** foreign classifier; validate alone is insufficient proof of the graph).
-- [ ] T005 Document **one** chosen precedence for Windows x86_64 natives (artifact unpack vs `hdf5.lib.dir` from `build.properties`) in `README.md` and align the same decision in `specs/002-hdf5-maven-deps/research.md` (per `plan.md` post-design re-check).
+- [x] T002 Add properties `hdfgroup.hdf5.native.version` and `hdfgroup.hdf5.java.ffm.version` (both `2.2.0`) and `<dependencyManagement>` for `org.hdfgroup:hdf5-native` and **`org.hdfgroup:hdf5-java-ffm`** with **per-platform classifiers** (minimum: **`windows-x86_64`**; add **correspondent** managed entries when other platform artifacts are confirmed in `pom.xml`, exact versions, no ranges).
+- [x] T003 Add a **Windows + amd64/x86_64**–activated `<profile>` in `object/pom.xml` with compile-scoped `<dependency>` elements referencing the managed coordinates for **`windows-x86_64`** (no version ranges); **mirror the same pattern** for other OS/arch when their classifiers are wired.
+- [x] T004 On a runner where **only** the default (non-Windows) profile is active, run `mvn -q -DskipTests validate` **and** `mvn -q -DskipTests dependency:tree -pl object` at the repository root; iterate `object/pom.xml` profile `activation` until **neither** output lists **`hdf5-java-ffm`** with classifier **`windows-x86_64`** (or any **inactive** foreign classifier; validate alone is insufficient proof of the graph).
+- [x] T005 Document **one** chosen precedence for Windows x86_64 natives (artifact unpack vs `hdf5.lib.dir` from `build.properties`) in `README.md` and align the same decision in `specs/002-hdf5-maven-deps/research.md` (per `plan.md` post-design re-check).
 
 ---
 
@@ -50,9 +50,9 @@ correspondent classifiers exist for other OS/arch at **2.2.0** when additional p
 `mvn -q -DskipTests dependency:tree -pl object` lists both coordinates at **2.2.0**; on Linux,
 `mvn -q -DskipTests validate` still passes.
 
-- [ ] T006 [US1] On **Windows x86_64**, run `mvn -q -DskipTests dependency:tree -pl object` and fix `pom.xml` / `object/pom.xml` until both org.hdfgroup artifacts appear at **2.2.0** with the intended classifier for `hdf5-java-ffm`.
-- [ ] T007 [US1] If `dependency:tree` shows **duplicate or conflicting** HDF5 Java stacks, add the minimal fix in `pom.xml` (Enforcer snippet, `<exclusions>`, or `dependencyManagement` ordering) and record the rationale in `specs/002-hdf5-maven-deps/research.md`. **Additionally** (constitution III / `plan.md`): add a **lightweight automated** guard in `pom.xml` when feasible (e.g. `maven-enforcer-plugin` rule, `dependency:analyze`, or scripted `dependency:tree` check in CI) that fails if org.hdfgroup HDF5 **2.2.0** coordinates drift; if not feasible, record **manual verification only** and the exact commands in `specs/002-hdf5-maven-deps/research.md`.
-- [ ] T014 [US1] Document **expected Maven resolution failure** when `org.hdfgroup` artifacts are missing (representative `Could not resolve` / `was not found` lines) in `specs/002-hdf5-maven-deps/quickstart.md` and add a one-line pointer from `README.md` (covers `spec.md` US1 acceptance scenario 2).
+- [x] T006 [US1] On **Windows x86_64**, run `mvn -q -DskipTests dependency:tree -pl object` and fix `pom.xml` / `object/pom.xml` until both org.hdfgroup artifacts appear at **2.2.0** with the intended classifier for `hdf5-java-ffm`.
+- [x] T007 [US1] If `dependency:tree` shows **duplicate or conflicting** HDF5 Java stacks, add the minimal fix in `pom.xml` (Enforcer snippet, `<exclusions>`, or `dependencyManagement` ordering) and record the rationale in `specs/002-hdf5-maven-deps/research.md`. **Additionally** (constitution III / `plan.md`): add a **lightweight automated** guard in `pom.xml` when feasible (e.g. `maven-enforcer-plugin` rule, `dependency:analyze`, or scripted `dependency:tree` check in CI) that fails if org.hdfgroup HDF5 **2.2.0** coordinates drift; if not feasible, record **manual verification only** and the exact commands in `specs/002-hdf5-maven-deps/research.md`.
+- [x] T014 [US1] Document **expected Maven resolution failure** when `org.hdfgroup` artifacts are missing (representative `Could not resolve` / `was not found` lines) in `specs/002-hdf5-maven-deps/quickstart.md` and add a one-line pointer from `README.md` (covers `spec.md` US1 acceptance scenario 2).
 
 **Checkpoint**: User Story 1 satisfied — Windows dependency line is pinned and observable.
 
@@ -66,8 +66,8 @@ for non-Windows (**FR-004**, **FR-005**).
 **Independent Test**: A reader can name both coordinates and explain local cache vs Central from
 `README.md` / `CLAUDE.md` alone.
 
-- [ ] T008 [P] [US2] Add a **Windows x86_64** subsection to `README.md` documenting the two coordinates, how to populate `~/.m2` before Central, and pointer to `specs/002-hdf5-maven-deps/quickstart.md`.
-- [ ] T009 [P] [US2] Add a short HDF5 **Maven coordinates** block to `CLAUDE.md` linking `specs/002-hdf5-maven-deps/quickstart.md` and stating **non-Windows** still follows existing `build.properties` / `hdf5.lib.dir` flow unless extended later.
+- [x] T008 [P] [US2] Add a **Windows x86_64** subsection to `README.md` documenting the two coordinates, how to populate `~/.m2` before Central, and pointer to `specs/002-hdf5-maven-deps/quickstart.md`.
+- [x] T009 [P] [US2] Add a short HDF5 **Maven coordinates** block to `CLAUDE.md` linking `specs/002-hdf5-maven-deps/quickstart.md` and stating **non-Windows** still follows existing `build.properties` / `hdf5.lib.dir` flow unless extended later.
 
 **Checkpoint**: User Stories 1 and 2 independently verifiable (build graph + docs).
 
@@ -81,7 +81,7 @@ Story 3).
 **Independent Test**: One short passage in `README.md` explicitly compares “today” vs “after
 Central” without changing coordinates.
 
-- [ ] T010 [US3] Add the **same GAV before and after Maven Central** passage (≤ one screen) to `README.md` per `spec.md` SC-003.
+- [x] T010 [US3] Add the **same GAV before and after Maven Central** passage (≤ one screen) to `README.md` per `spec.md` SC-003.
 
 ---
 
@@ -89,10 +89,10 @@ Central” without changing coordinates.
 
 **Purpose**: Contract alignment, optional packaging, CI smoke.
 
-- [ ] T011 [P] Update R1/R2 rows in `specs/002-hdf5-maven-deps/contracts/developer-build-resolution.md` to match **verified** packaging and final `dependency:get` flags from T001 / implemented POMs.
-- [ ] T012 Extend `hdfview/pom.xml` with **platform-scoped** **unpack/copy** of `hdf5-native` payloads (Windows first) **only if** T001 shows packaging requires it for installers; otherwise add a one-line **N/A** rationale to `README.md` and skip code changes.
-- [ ] T013 Confirm `.github/workflows/ci-windows.yml` (or the active Windows CI workflow) still succeeds for this branch after dependency changes (adjust workflow only if HDF Group artifacts must be primed on CI runners).
-- [ ] T015 Add a **repeatable verification** subsection to `specs/002-hdf5-maven-deps/quickstart.md` that ties **SC-001** to explicit commands (same as maintainer runs in CI / locally) and **SC-002** to concrete `rg`/`grep` one-liners over `README.md` and `CLAUDE.md` for the two org.hdfgroup coordinates and version `2.2.0` (so “100% sampled paths” is operationalized as “run these commands”).
+- [x] T011 [P] Update R1/R2 rows in `specs/002-hdf5-maven-deps/contracts/developer-build-resolution.md` to match **verified** packaging and final `dependency:get` flags from T001 / implemented POMs.
+- [x] T012 Extend `hdfview/pom.xml` with **platform-scoped** **unpack/copy** of `hdf5-native` payloads (Windows first) **only if** T001 shows packaging requires it for installers; otherwise add a one-line **N/A** rationale to `README.md` and skip code changes.
+- [x] T013 Confirm `.github/workflows/ci-windows.yml` (or the active Windows CI workflow) still succeeds for this branch after dependency changes (adjust workflow only if HDF Group artifacts must be primed on CI runners).
+- [x] T015 Add a **repeatable verification** subsection to `specs/002-hdf5-maven-deps/quickstart.md` that ties **SC-001** to explicit commands (same as maintainer runs in CI / locally) and **SC-002** to concrete `rg`/`grep` one-liners over `README.md` and `CLAUDE.md` for the two org.hdfgroup coordinates and version `2.2.0` (so “100% sampled paths” is operationalized as “run these commands”).
 
 ---
 
@@ -179,7 +179,7 @@ Central” without changing coordinates.
 | **US2 (P2)** | 2 (parallelizable pair) |
 | **US3 (P3)** | 1 |
 | **Polish** | 4 |
-| **Format** | Every task uses `- [ ]`, sequential `T001`–`T015`, file paths in descriptions |
+| **Format** | Tasks use `- [x]` when done; IDs `T001`–`T015`, file paths in descriptions |
 
 ---
 

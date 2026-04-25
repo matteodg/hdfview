@@ -435,5 +435,49 @@
             <properties>
             </properties>
         </profile>
+        <!-- org.hdfgroup HDF5 2.2.0 Java FFM + platform native bundle (SciJava layout in JAR).
+             Add sibling profiles with other os/arch + matching classifiers when published. -->
+        <profile>
+            <id>hdf5-org-hdfgroup-ffm-windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-native</artifactId>
+                    <classifier>windows-x86_64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-java-ffm</artifactId>
+                    <classifier>windows-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>hdf5-org-hdfgroup-ffm-windows-x86_64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-native</artifactId>
+                    <classifier>windows-x86_64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-java-ffm</artifactId>
+                    <classifier>windows-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>

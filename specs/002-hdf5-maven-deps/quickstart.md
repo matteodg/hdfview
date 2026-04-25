@@ -43,3 +43,47 @@ mvn -q -DskipTests validate
 
 Expected: Linux jobs do not resolve **`hdf5-java-ffm`** classifiers for **inactive** foreign
 platforms (e.g. **`windows-x86_64`** when no Windows profile is active).
+
+Also run (Linux / macOS default profile):
+
+```bash
+mvn -q -DskipTests dependency:tree -pl object
+```
+
+Confirm **`org.hdfgroup:hdf5-java-ffm`** does **not** appear when the Windows FFM profiles are
+inactive.
+
+## 6. When artifacts are missing (expected Maven output)
+
+If **`org.hdfgroup`** artifacts are not in your resolver, Maven typically fails during
+**`validate`**, **`compile`**, or **`dependency:get`** with messages similar to:
+
+- `Could not find artifact org.hdfgroup:hdf5-native:jar:windows-x86_64:2.2.0 in ...`
+- `Could not resolve dependencies for project ...`
+- `was not found in https://repo.maven.apache.org/maven2 ... during a previous attempt ...`
+
+Fix: install the JARs locally, add an internal mirror, or wait until Maven Central hosts the same
+coordinates (see `README.md`).
+
+## 7. Repeatable verification (SC-001 / SC-002)
+
+These commands operationalize the success criteria in `spec.md` for maintainers.
+
+**SC-001 — dependency graph at 2.2.0 (Windows x86_64 active)**:
+
+```bash
+mvn -DskipTests dependency:tree -pl object
+```
+
+Expect lines containing:
+
+- `org.hdfgroup:hdf5-native:jar:windows-x86_64:2.2.0:compile`
+- `org.hdfgroup:hdf5-java-ffm:jar:windows-x86_64:2.2.0:compile`
+
+**SC-002 — docs name the same coordinates** (from repo root; requires `rg` or use `grep -E`):
+
+```bash
+rg -n "org\.hdfgroup:hdf5-native|org\.hdfgroup:hdf5-java-ffm|windows-x86_64|2\.2\.0" README.md CLAUDE.md
+```
+
+Expect hits in both files with **no** second conflicting HDF5 **2.2.0** story for the Windows path.

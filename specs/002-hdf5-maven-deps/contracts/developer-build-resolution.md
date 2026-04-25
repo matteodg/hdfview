@@ -19,7 +19,7 @@ at **2.2.0**; this contract’s R2 row uses **`windows-x86_64`** as the referenc
 
 | Step | Platform | Command | Expected signal |
 |------|----------|---------|-------------------|
-| R1 | Windows x86_64 | `mvn -q -DskipTests dependency:get -DgroupId=org.hdfgroup -DartifactId=hdf5-native -Dversion=2.2.0` (add `-Dpackaging=…` if not default `jar`) | Resolves **2.2.0** without substitution |
+| R1 | Windows x86_64 | `mvn -q -DskipTests dependency:get -DgroupId=org.hdfgroup -DartifactId=hdf5-native -Dversion=2.2.0 -Dpackaging=jar -Dclassifier=windows-x86_64` | Resolves **2.2.0** `windows-x86_64` without substitution |
 | R2 | Windows x86_64 | `mvn -q -DskipTests dependency:get -DgroupId=org.hdfgroup -DartifactId=hdf5-java-ffm -Dversion=2.2.0 -Dpackaging=jar -Dclassifier=windows-x86_64` | Classifier **`windows-x86_64`** resolves at **2.2.0** (substitute **correspondent** `-Dclassifier=` on other OS) |
 | R3 | Any | `mvn -q -DskipTests validate` on Linux CI | Does **not** download **inactive** foreign `hdf5-java-ffm` classifiers |
 

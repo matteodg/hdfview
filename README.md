@@ -70,3 +70,38 @@ Development code is available at our Github location:
     
    https://github.com/HDFGroup/hdfview.git
 
+
+## HDF5 2.2.0 — org.hdfgroup Maven artifacts (Java FFM)
+
+The **`object`** module can resolve **The HDF Group**’s published **HDF5 2.2.0** line from Maven:
+
+- **`org.hdfgroup:hdf5-native:2.2.0`** — platform **classifier** on the JAR (e.g. **`windows-x86_64`**
+  on 64-bit Windows). Other OS/arch pairs use **correspondent classifiers** from HDF Group at the
+  same version when wired in `pom.xml`.
+- **`org.hdfgroup:hdf5-java-ffm:2.2.0`** — same **per-platform classifier** pattern (reference:
+  **`windows-x86_64`**).
+
+**Before Maven Central**: install the JARs into `~/.m2` (e.g. `mvn install:install-file` with the
+exact GAV + classifier) or use a corporate mirror. **After Central**: the same coordinates resolve
+from the default public repository—no POM version change required.
+
+Detailed commands and checks: **`specs/002-hdf5-maven-deps/quickstart.md`**.
+
+### Native precedence (Windows)
+
+HDFView still copies HDF5 JNI DLLs from **`hdf5.lib.dir`** (see `build.properties`) via the existing
+**Windows** profile in `object/pom.xml` for **`jarhdf5`**. The org.hdfgroup **`hdf5-native`** JAR
+also carries **bundled** HDF5 for the **FFM / SciJava native-lib-loader** classpath path. Prefer
+**aligning `hdf5.lib.dir` with HDF5 2.2.0** while both stacks are present, or plan migration off JNI,
+to reduce risk of loading **two incompatible `hdf5.dll`** builds.
+
+### Optional `hdfview` unpack of `hdf5-native`
+
+**N/A for this change** — natives are bundled inside the org.hdfgroup artifacts; no extra unpack
+step was added to `hdfview/pom.xml`.
+
+### Missing resolution errors
+
+If Maven cannot download the org.hdfgroup artifacts, see **“When artifacts are missing”** in
+`specs/002-hdf5-maven-deps/quickstart.md` for representative log lines (`Could not find artifact`,
+`Could not resolve dependencies`, etc.).
