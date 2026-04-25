@@ -3,7 +3,7 @@
 ## Platform-Specific Build Commands
 
 Before following these steps to build HDFView from source, you will need to have the following installed on your machine:
-- JDK 21
+- JDK 25
 - Git + gh
 - Maven
 

@@ -32,9 +32,9 @@ and CI parity (see T011, T030).
 
 **Purpose**: Confirm full blast radius before edits.
 
-- [ ] T001 [P] List every `java-version: '21'` hit under `.github/workflows/` (record file paths; no
+- [x] T001 [P] List every `java-version: '21'` hit under `.github/workflows/` (record file paths; no
   edits yet).
-- [ ] T002 [P] List every contributor-facing `Java 21` / `JDK 21` / `Java 21+` string in
+- [x] T002 [P] List every contributor-facing `Java 21` / `JDK 21` / `Java 21+` string in
   `CLAUDE.md`, `CONTRIBUTING.md`, `docs/`, `run-hdfview.sh`, and `run-hdfview.bat` (record paths; no
   edits yet).
 
@@ -45,10 +45,10 @@ and CI parity (see T011, T030).
 **Purpose**: Satisfy plan **Constitution Check** — governance MUST match the new JDK **before** or
 **with** the same merge series as toolchain edits.
 
-**⚠️ CRITICAL**: Do not merge JDK **25** build pins while `.specify/memory/constitution.md` still
-requires Java **21**.
+**⚠️ Gate**: Before merging POM/CI that require JDK **25**, confirm `.specify/memory/constitution.md`
+requires **Java 25** (**≥1.1.0**) so governance and toolchain stay aligned.
 
-- [ ] T003 Verify Java **25** baseline language, Sync Impact Report, and semver (**≥1.1.0**) in
+- [x] T003 Verify Java **25** baseline language, Sync Impact Report, and semver (**≥1.1.0**) in
   `.specify/memory/constitution.md` (Principle I + Engineering Standards; align with governance
   rules in that file). If already amended on this branch, re-check diff and **Last Amended** date only.
 
@@ -63,17 +63,17 @@ JDK **24**, Enforcer emits an explicit **Java 25 required** failure (per **FR-00
 
 ### Implementation for User Story 1
 
-- [ ] T004 [US1] Set `maven.compiler.source` and `maven.compiler.release` to **25** in root `pom.xml`
+- [x] T004 [US1] Set `maven.compiler.source` and `maven.compiler.release` to **25** in root `pom.xml`
   `<properties>`.
-- [ ] T005 [US1] Set `maven-compiler-plugin` `<source>`, `<target>`, and `<release>` to **25** in root
+- [x] T005 [US1] Set `maven-compiler-plugin` `<source>`, `<target>`, and `<release>` to **25** in root
   `pom.xml` `<pluginManagement><plugins>` entry for `maven-compiler-plugin`.
-- [ ] T006 [US1] Set `maven-javadoc-plugin` `<source>` and `<target>` to **25** in root `pom.xml`.
-- [ ] T007 [US1] Set PMD `targetJdk` to **25** in root `pom.xml` `maven-pmd-plugin` `<configuration>`.
-- [ ] T008 [US1] Set compiler `<source>`, `<target>`, and `<release>` to **25** in `object/pom.xml` for
+- [x] T006 [US1] Set `maven-javadoc-plugin` `<source>` and `<target>` to **25** in root `pom.xml`.
+- [x] T007 [US1] Set PMD `targetJdk` to **25** in root `pom.xml` `maven-pmd-plugin` `<configuration>`.
+- [x] T008 [US1] Set compiler `<source>`, `<target>`, and `<release>` to **25** in `object/pom.xml` for
   the `maven-compiler-plugin` configuration.
-- [ ] T009 [US1] Set compiler `<source>`, `<target>`, and `<release>` to **25** in `hdfview/pom.xml` for
+- [x] T009 [US1] Set compiler `<source>`, `<target>`, and `<release>` to **25** in `hdfview/pom.xml` for
   the `maven-compiler-plugin` configuration.
-- [ ] T010 [US1] Add `requireJavaVersion` with version **`[25,)`** (or **`25`** per Enforcer docs) to
+- [x] T010 [US1] Add `requireJavaVersion` with version **`[25,)`** (or **`25`** per Enforcer docs) to
   `maven-enforcer-plugin` in root `pom.xml`, with a custom `<message>` (e.g. **Java 25 or newer is
   required to build HDFView.**); do **not** use **`1.25`** as the version string. Preserve existing
   HDF-related enforcer executions.
@@ -94,16 +94,16 @@ push show `setup-java` selecting **25**.
 
 ### Implementation for User Story 2
 
-- [ ] T012 [P] [US2] Update `actions/setup-java` step names and `java-version` to **25** in
+- [x] T012 [P] [US2] Update `actions/setup-java` step names and `java-version` to **25** in
   `.github/workflows/ci-linux.yml`.
-- [ ] T013 [P] [US2] Same for `.github/workflows/ci-macos.yml`.
-- [ ] T014 [P] [US2] Same for `.github/workflows/ci-windows.yml`.
-- [ ] T015 [P] [US2] Same for `.github/workflows/maven-quality.yml`.
-- [ ] T016 [P] [US2] Same for **all** `setup-java` steps in `.github/workflows/maven-security.yml`.
-- [ ] T017 [P] [US2] Same for `.github/workflows/build-linux.yml`.
-- [ ] T018 [P] [US2] Same for `.github/workflows/build-macos.yml`.
-- [ ] T019 [P] [US2] Same for **both** JDK setup jobs in `.github/workflows/build-windows.yml`.
-- [ ] T020 [P] [US2] Same for `.github/workflows/publish-maven-packages.yml`.
+- [x] T013 [P] [US2] Same for `.github/workflows/ci-macos.yml`.
+- [x] T014 [P] [US2] Same for `.github/workflows/ci-windows.yml`.
+- [x] T015 [P] [US2] Same for `.github/workflows/maven-quality.yml`.
+- [x] T016 [P] [US2] Same for **all** `setup-java` steps in `.github/workflows/maven-security.yml`.
+- [x] T017 [P] [US2] Same for `.github/workflows/build-linux.yml`.
+- [x] T018 [P] [US2] Same for `.github/workflows/build-macos.yml`.
+- [x] T019 [P] [US2] Same for **both** JDK setup jobs in `.github/workflows/build-windows.yml`.
+- [x] T020 [P] [US2] Same for `.github/workflows/publish-maven-packages.yml`.
 
 **Checkpoint**: CI configuration matches **FR-003**.
 
@@ -118,15 +118,15 @@ push show `setup-java` selecting **25**.
 
 ### Implementation for User Story 3
 
-- [ ] T021 [P] [US3] Update Java version and jpackage wording in `CLAUDE.md` to **Java 25** (build,
+- [x] T021 [P] [US3] Update Java version and jpackage wording in `CLAUDE.md` to **Java 25** (build,
   plugins, installers sections).
-- [ ] T022 [P] [US3] Update Java prerequisite line in `CONTRIBUTING.md` to **Java 25** minimum.
-- [ ] T023 [P] [US3] Update prerequisites in `docs/Testing-Guide.md` to **Java 25**.
-- [ ] T024 [P] [US3] Update JDK bullet in `docs/guides/Cross-Platform-Build-Quick-Reference.md` to
+- [x] T022 [P] [US3] Update Java prerequisite line in `CONTRIBUTING.md` to **Java 25** minimum.
+- [x] T023 [P] [US3] Update prerequisites in `docs/Testing-Guide.md` to **Java 25**.
+- [x] T024 [P] [US3] Update JDK bullet in `docs/guides/Cross-Platform-Build-Quick-Reference.md` to
   **JDK 25**.
-- [ ] T025 [US3] Update header comment, version check, and user-facing messages in `run-hdfview.sh` to
+- [x] T025 [US3] Update header comment, version check, and user-facing messages in `run-hdfview.sh` to
   require **Java 25+** (not 21).
-- [ ] T026 [US3] Update comments and messages in `run-hdfview.bat` to require **Java 25+** (not 21).
+- [x] T026 [US3] Update comments and messages in `run-hdfview.bat` to require **Java 25+** (not 21).
 
 **Checkpoint**: Contributor-facing surfaces match **FR-004** and `contracts/developer-build-environment.md`.
 
@@ -136,12 +136,12 @@ push show `setup-java` selecting **25**.
 
 **Purpose**: Stragglers, packaging alignment, and broader validation.
 
-- [ ] T027 [P] Repo-wide search for `java-version: '21'`, `Java 21`, `JDK 21`, and `Java 21+`; fix any
+- [x] T027 [P] Repo-wide search for `java-version: '21'`, `Java 21`, `JDK 21`, and `Java 21+`; fix any
   remaining **minimum** requirement strings (including `README.md`, `CLAUDE.md`, and misleading
   comments in `pom.xml`).
-- [ ] T028 Re-read `specs/001-jdk-25-ffm/quickstart.md` against final `pom.xml` Enforcer behavior and
+- [x] T028 Re-read `specs/001-jdk-25-ffm/quickstart.md` against final `pom.xml` Enforcer behavior and
   update if commands or failure messages changed.
-- [ ] T029 Audit `hdfview/pom.xml` and root `pom.xml` for **jpackage** / release installer profiles;
+- [x] T029 Audit `hdfview/pom.xml` and root `pom.xml` for **jpackage** / release installer profiles;
   align any hard-coded JDK **21** toolchains with **25** or document a scoped exception in
   `specs/001-jdk-25-ffm/plan.md`.
 - [ ] T030 Run `mvn test` from repo root on JDK **25** (or CI-parity command); if a quality plugin
@@ -222,3 +222,6 @@ Task: "Update .github/workflows/ci-windows.yml …"
 - **Format**: Every implementation line uses `- [ ]`, sequential `Txxx`, optional `[P]`, story
   labels **`[US1]`** on **T004–T011**, **`[US2]`** on **T012–T020**, **`[US3]`** on **T021–T026**
   (no story labels on setup, foundational, or polish phases), and an explicit file path.
+- **Open**: **T011** and **T030** remain unchecked until a machine with **JDK 25**, valid
+  `build.properties`, and HDF native libraries runs `mvn clean compile -DskipTests` and `mvn test`
+  successfully (local failure observed was missing HDF/`object` antrun paths, not Java baseline).

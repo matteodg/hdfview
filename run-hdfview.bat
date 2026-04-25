@@ -10,7 +10,7 @@ REM   1. Maven exec:java (for development)
 REM   2. Direct JAR execution (recommended)
 REM
 REM Requirements:
-REM   - Java 21+
+REM   - Java 25+
 REM   - Maven 3.6+ (only for option 1)
 REM   - HDF5 and HDF4 native libraries (configured in build.properties)
 REM   - HDFView must be built before running this script
@@ -77,7 +77,7 @@ echo [INFO] Checking Java version...
 java -version >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Java not found in PATH
-    echo [ERROR] Please install Java 21 or later
+    echo [ERROR] Please install Java 25 or later
     exit /b 1
 )
 
@@ -88,7 +88,23 @@ for /f "tokens=3" %%v in ('java -version 2^>^&1 ^| findstr /i "version"') do (
     goto :java_version_done
 )
 :java_version_done
-echo [OK] Java !JAVA_VERSION! detected
+REM Require Java 25+ (JAVA_VERSION is like 25.0.1 or 1.8.0_301)
+set "JMAJOR="
+echo !JAVA_VERSION! | findstr /r "^1\.[0-9]" >nul
+if not errorlevel 1 (
+    for /f "tokens=2 delims=." %%a in ("!JAVA_VERSION!") do set "JMAJOR=%%a"
+) else (
+    for /f "tokens=1 delims=." %%a in ("!JAVA_VERSION!") do set "JMAJOR=%%a"
+)
+if not defined JMAJOR (
+    echo [ERROR] Could not parse Java version from: !JAVA_VERSION!
+    exit /b 1
+)
+if !JMAJOR! LSS 25 (
+    echo [ERROR] Java 25 or later is required. Found Java !JAVA_VERSION!
+    exit /b 1
+)
+echo [OK] Java !JAVA_VERSION! detected ^(major !JMAJOR!^)
 echo.
 
 REM Check Maven

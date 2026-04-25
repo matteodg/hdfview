@@ -15,8 +15,8 @@
 
   <properties>
     <!-- argLine not defined here - set by JaCoCo prepare-agent and/or CLI -->
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.release>25</maven.compiler.release>
     <!-- Use classpath instead of module path (module-info.java disabled) -->
     <maven.compiler.testCompilerArgument>-classpath</maven.compiler.testCompilerArgument>
     <slf4j.version>2.0.17</slf4j.version>
@@ -119,9 +119,9 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.14.0</version>
           <configuration>
-            <source>21</source>
-            <target>21</target>
-            <release>21</release>
+            <source>25</source>
+            <target>25</target>
+            <release>25</release>
             <!-- Force classpath mode instead of module path -->
             <forceLegacyJavacApi>true</forceLegacyJavacApi>
           </configuration>
@@ -295,8 +295,8 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.6.3</version>
           <configuration>
-            <source>21</source>
-            <target>21</target>
+            <source>25</source>
+            <target>25</target>
             <encoding>UTF-8</encoding>
             <docencoding>UTF-8</docencoding>
             <charset>UTF-8</charset>
@@ -354,7 +354,7 @@
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.6.4</version>
           <dependencies>
-            <!-- Update SpotBugs core - Java 21 has limited support -->
+            <!-- Update SpotBugs core - Java 25 bytecode support depends on SpotBugs version -->
             <dependency>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs</artifactId>
@@ -363,7 +363,7 @@
           </dependencies>
         </plugin>
 
-        <!-- PMD Plugin for Java 21 compatible static analysis -->
+        <!-- PMD Plugin for Java 25 compatible static analysis -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
@@ -381,7 +381,7 @@
             </dependency>
           </dependencies>
           <configuration>
-            <targetJdk>21</targetJdk>
+            <targetJdk>25</targetJdk>
             <rulesets>
               <ruleset>pmd-rules.xml</ruleset>
             </rulesets>
@@ -401,7 +401,7 @@
           </configuration>
         </plugin>
 
-        <!-- Checkstyle Plugin for Java 21 compatible code style enforcement -->
+        <!-- Checkstyle Plugin for Java 25 compatible code style enforcement -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
@@ -470,6 +470,21 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <executions>
             <execution>
+              <id>enforce-java-version</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireJavaVersion>
+                    <version>[25,)</version>
+                    <message>Java 25 or newer is required to build HDFView.</message>
+                  </requireJavaVersion>
+                </rules>
+              </configuration>
+            </execution>
+            <execution>
               <id>enforce-hdf5-libraries</id>
               <phase>process-resources</phase>
               <goals>
@@ -521,13 +536,13 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </executions>
         </plugin>
         <!-- SpotBugs Plugin for static code analysis
-             NOTE: SpotBugs 4.8.6 does not support Java 21 bytecode (class file major version 68)
-             To enable SpotBugs analysis:
-             1. Wait for SpotBugs version with Java 21 support, OR
-             2. Compile with Java 17 temporarily for analysis
+             NOTE: SpotBugs bytecode support lags new JDK releases; verify after raising `release`.
+             To enable SpotBugs analysis when supported:
+             1. Upgrade spotbugs-maven-plugin / spotbugs core to a Java 25-capable release, OR
+             2. Run analysis with a toolchain that matches SpotBugs support.
 
-             Plugin is configured and ready - uncomment executions when Java 21 support is available
-             Manual execution: mvn spotbugs:spotbugs (may fail with current Java 21 setup) -->
+             Plugin is configured and ready - uncomment executions when SpotBugs supports this JDK.
+             Manual execution: mvn spotbugs:spotbugs -->
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
@@ -544,7 +559,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
             <includeTests>false</includeTests>
             <onlyAnalyze>hdf.*,ncsa.*</onlyAnalyze>
           </configuration>
-          <!-- Executions commented out due to Java 21 incompatibility - uncomment when SpotBugs supports Java 21
+          <!-- Executions commented out due to SpotBugs/JDK bytecode compatibility - uncomment when supported
           <executions>
             <execution>
               <id>spotbugs-analysis</id>
@@ -556,7 +571,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </executions>
           -->
           <dependencies>
-            <!-- Update SpotBugs core to latest version for Java 21 support -->
+            <!-- Update SpotBugs core to latest version for current JDK support -->
             <dependency>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs</artifactId>
@@ -565,7 +580,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </dependencies>
         </plugin>
 
-        <!-- PMD Static Analysis - Java 21 Compatible -->
+        <!-- PMD Static Analysis - Java 25 Compatible -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
@@ -587,7 +602,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </executions>
         </plugin>
 
-        <!-- Checkstyle Code Style Enforcement - Java 21 Compatible -->
+        <!-- Checkstyle Code Style Enforcement - Java 25 Compatible -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
@@ -739,7 +754,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
         </reportSets>
       </plugin>
 
-      <!-- SpotBugs Reporting (ready for Java 21 activation) -->
+      <!-- SpotBugs Reporting (enable when SpotBugs supports this JDK) -->
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>

@@ -19,7 +19,7 @@ This guide explains how to run tests for HDFView locally and in CI environments.
 
 ### Required
 
-1. **Java 21** - Installed and configured
+1. **Java 25** - Installed and configured
 2. **Maven 3.9+** - Build system
 3. **HDF5 Native Libraries** - Configured in `build.properties`
 4. **HDF4 Native Libraries** - Configured in `build.properties`

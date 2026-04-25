@@ -32,8 +32,8 @@ OS-specific
 **Constraints**: JVM flags for native access (`--enable-native-access=jarhdf5`, `--add-opens` …)
 must remain valid; jpackage/installer pipelines must keep using a **JDK that matches** the declared
 baseline where they compile bytecode  
-**Scale/Scope**: Root `pom.xml` properties + module POM overrides + **all** workflows using
-`actions/setup-java` with `java-version: '21'` + scripts/docs that mention Java 21
+**Scale/Scope**: Root `pom.xml` properties + module POM overrides + GitHub Actions `setup-java`
+jobs + scripts/docs that still reference older Java baselines (cleanup via `tasks.md` **T027**).
 
 ## Constitution Check
 
@@ -41,28 +41,26 @@ baseline where they compile bytecode
 
 | Principle / rule (from `.specify/memory/constitution.md`) | Status | Notes |
 |-----------------------------------------------------------|--------|-------|
-| I. Build & Tooling Consistency (Maven-only) | **Pass** | Still Maven-only; JDK major bump is in
-spec scope. |
-| I / Engineering Standards: text still says **Java 21** | **Violation** | Constitution lags the
-approved feature. **Mitigation**: amend constitution (MINOR bump) in the same change series as JDK
-25 land (see Complexity Tracking). |
+| I. Build & Tooling Consistency (Maven-only, **Java 25**) | **Pass** | Constitution **v1.1.0+**
+requires Java **25**; matches this feature’s **FR-001**. |
 | II. Native Library Safety | **Pass** | Baseline bump must not weaken crash guards; no native call
 surface change required for this feature. |
 | III. Tests where they matter | **Pass** | Run existing suites on JDK 25; add tests only if a
 JDK-specific regression is found. |
 | IV. Minimal, focused changes | **Pass** | Touch only version pins, enforcer, docs, CI matrices,
 constitution alignment. |
-| V. Quality gates & documentation | **Pass** | Verify PMD/Checkstyle/JaCoCo still run; bump static
-analysis **target JDK** metadata (e.g. PMD `targetJdk`) to **25** alongside compiler `release`. |
+| V. Quality gates & documentation | **Pass** | Verify PMD/Checkstyle/JaCoCo still run; PMD
+`targetJdk` and compiler `release` raised to **25** in implementation. |
 
-**Gate conclusion**: Proceed with implementation **only** if constitution and docs are updated
-**together** with the JDK 25 baseline (no “code says 25 / constitution says 21” drift).
+**Gate conclusion**: Constitution, Maven/CI, and contributor docs MUST stay aligned on **Java 25**
+for merge. Historical note: pre-**v1.1.0** constitution text referenced Java 21; that gate is
+**closed** once `.specify/memory/constitution.md` is at **1.1.0** or newer.
 
 ### Post-design re-check
 
-Research and contracts lock the enforcement strategy (Maven `release` **25**, Enforcer
-`requireJavaVersion`, CI `setup-java` **25**, launcher minimum **25**, constitution **25**). No
-additional constitution conflicts identified.
+Enforcement strategy: Maven `release` **25**, Enforcer `requireJavaVersion` **`[25,)`**, CI
+`setup-java` **25**, launcher minimum **25**, constitution **Java 25** (**v1.1.0**). Re-scan for
+stale “Java 21” strings during polish (**T027**).
 
 ## Project Structure
 
@@ -87,7 +85,7 @@ pom.xml                          # maven.compiler.*, pluginManagement compiler c
 object/pom.xml                   # compiler release overrides if any
 hdfview/pom.xml                  # compiler release overrides if any
 .github/workflows/
-├── ci-linux.yml                 # setup-java 21 → 25
+├── ci-linux.yml                 # setup-java 25
 ├── ci-macos.yml
 ├── ci-windows.yml
 ├── maven-build.yml              # if present / shared patterns
@@ -99,12 +97,12 @@ hdfview/pom.xml                  # compiler release overrides if any
 ├── build-windows.yml
 ├── publish-maven-packages.yml
 ├── release.yml                  # verify any embedded JDK setup
-└── …                            # grep for java-version / Java 21
-run-hdfview.sh                   # Java version gate (currently >=21)
+└── …                            # grep for stale java-version / Java baseline strings
+run-hdfview.sh                   # Java version gate (>=25)
 run-hdfview.bat
 README.md
 CLAUDE.md
-.specify/memory/constitution.md # amend Java 21 → 25 (sync impact header + version bump)
+.specify/memory/constitution.md # Java 25 baseline (v1.1.0+)
 ```
 
 **Structure Decision**: This feature is a **cross-cutting build & CI** change anchored at the root
@@ -114,10 +112,6 @@ structural move**—only bytecode level change via `release`.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Constitution still mandates **Java 21** while the feature mandates **25** | Single source of
-truth for agents and reviewers; avoids contradictory guidance | Leaving constitution at 21 would
-fail the plan gate and mislead automation |
+> **Historical**: Constitution **v1.0.0** still referenced Java **21** while this feature targets
+**25**. Resolved by amending `.specify/memory/constitution.md` to **v1.1.0** (Java **25**) in the same
+delivery series as the build/CI/doc updates.

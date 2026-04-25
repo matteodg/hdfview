@@ -134,7 +134,7 @@ mvn test -pl hdfview -Dtest=TestClassName
 
 ### Key Build Configuration
 
-- **Java Version**: Java 21 (set via `maven.compiler.source` and `maven.compiler.release`)
+- **Java Version**: Java 25 (set via `maven.compiler.source` and `maven.compiler.release`)
 - **Build System**: Maven-only (Ant build removed in Phase 1 migration)
 - **Build Properties**: External configuration loaded via properties-maven-plugin from `build.properties`
 - **Native Libraries**: HDF4/HDF5 native libraries required (paths configured in `build.properties`)
@@ -149,14 +149,14 @@ mvn test -pl hdfview -Dtest=TestClassName
 - **JaCoCo Plugin**: Code coverage analysis and reporting (60% line, 50% branch coverage targets)
 - **JavaDoc Plugin**: API documentation generation with multi-module aggregation
 - **Surefire Plugin**: JUnit 5 test execution with parallel test support
-- **PMD Plugin**: Static code analysis (v7.0+, Java 21 compatible)
-- **Checkstyle Plugin**: Code style enforcement (v10.12+, Java 21 compatible)
+- **PMD Plugin**: Static code analysis (v7.0+, Java 25 compatible)
+- **Checkstyle Plugin**: Code style enforcement (v10.12+, Java 25 compatible)
 - **OWASP Dependency Check**: Security vulnerability scanning
 - **License Plugin**: License compliance checking
 
 ### Distribution and Installers
 
-HDFView uses Java 21's native jpackage tool to create platform-specific installers:
+HDFView uses Java 25's native jpackage tool to create platform-specific installers:
 
 **Supported Formats:**
 - **Windows**: MSI installer with Authenticode signing
