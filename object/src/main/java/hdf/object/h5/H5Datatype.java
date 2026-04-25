@@ -1358,7 +1358,7 @@ public class H5Datatype extends Datatype {
                 log.debug("fromNative(): datatypeClass is unknown");
             }
 
-            datatypeSize = (isVLEN && !isVariableStr) ? HDF5Constants.H5T_VL_T : tsize;
+            datatypeSize = (isVLEN && !isVariableStr) ? HDF5Constants.H5T_VARIABLE : tsize;
         }
         if (datatypeSize == NATIVE)
             datatypeNATIVE = true;

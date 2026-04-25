@@ -210,7 +210,7 @@ JVM_ARGS=(
     "--add-opens" "java.base/java.time=ALL-UNNAMED"
     "--add-opens" "java.base/java.time.format=ALL-UNNAMED"
     "--add-opens" "java.base/java.util=ALL-UNNAMED"
-    "--enable-native-access=jarhdf5"
+    "--enable-native-access=ALL-UNNAMED"
     "--enable-native-access=jarhdf"
     "-Djava.library.path=$hdf5_lib_dir:$hdf_lib_dir"
 )

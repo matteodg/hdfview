@@ -69,13 +69,15 @@ jobs:
         with:
           java-version: '25'
           distribution: 'oracle'
+          server-id: hdfgroup-github-packages
+          server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+          server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
       - name: Cache Maven Dependencies
         uses: actions/cache@v4
         with:
           path: |
               ~/.m2/repository
-              !~/.m2/repository/org/hdfgroup
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
               ${{ runner.os }}-maven-
@@ -190,14 +192,7 @@ jobs:
               Copy-Item "lib\netcdf.jar" -Destination "repository\lib\" -ErrorAction SilentlyContinue
           }
 
-          $jarhdf5 = Get-ChildItem "repository\lib\jarhdf5-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($jarhdf5) {
-              $HDF5_VERSION = $jarhdf5.Name -replace 'jarhdf5-([0-9.]+)\.jar', '$1'
-              mvn install:install-file "-Dfile=$($jarhdf5.FullName)" `
-                "-DgroupId=jarhdf5" "-DartifactId=jarhdf5" "-Dversion=$HDF5_VERSION" "-Dpackaging=jar" "-DgeneratePom=true"
-              Write-Host "Installed: $($jarhdf5.Name) as version $HDF5_VERSION"
-              "HDF5_VERSION=$HDF5_VERSION" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          }
+          # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages)
 
           $jarhdf = Get-ChildItem "repository\lib\jarhdf-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
           if ($jarhdf) {
@@ -348,13 +343,15 @@ jobs:
           with:
             java-version: '25'
             distribution: 'oracle'
+            server-id: hdfgroup-github-packages
+            server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+            server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
   
         - name: Cache Maven Dependencies
           uses: actions/cache@v4
           with:
             path: |
               ~/.m2/repository
-              !~/.m2/repository/org/hdfgroup
             key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
               ${{ runner.os }}-maven-
@@ -446,14 +443,7 @@ jobs:
             if (Test-Path "lib\netcdf.jar") {
               Copy-Item "lib\netcdf.jar" -Destination "repository\lib\" -ErrorAction SilentlyContinue
             }
-            $jarhdf5 = Get-ChildItem "repository\lib\jarhdf5-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($jarhdf5) {
-              $HDF5_VERSION = $jarhdf5.Name -replace 'jarhdf5-([0-9.]+)\.jar', '$1'
-              mvn install:install-file "-Dfile=$($jarhdf5.FullName)" `
-                "-DgroupId=jarhdf5" "-DartifactId=jarhdf5" "-Dversion=$HDF5_VERSION" "-Dpackaging=jar" "-DgeneratePom=true"
-              Write-Host "Installed: $($jarhdf5.Name) as version $HDF5_VERSION"
-              "HDF5_VERSION=$HDF5_VERSION" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-            }
+            # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages)
             $jarhdf = Get-ChildItem "repository\lib\jarhdf-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($jarhdf) {
               $HDF4_VERSION = $jarhdf.Name -replace 'jarhdf-([0-9.]+)\.jar', '$1'

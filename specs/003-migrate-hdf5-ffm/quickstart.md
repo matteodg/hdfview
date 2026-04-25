@@ -2,6 +2,28 @@
 
 Use this after implementation lands to confirm **spec SC-002**, **FR-004**, and [contracts/single-hdf5-java-binding.md](./contracts/single-hdf5-java-binding.md).
 
+## 0. GitHub Packages authentication (local & CI)
+
+HDF Group publishes **`org.hdfgroup:hdf5-java-ffm`** / **`hdf5-native`** to **GitHub Packages** before
+they appear on Maven Central. The root `pom.xml` includes repository id **`hdfgroup-github-packages`**.
+
+Add to **`~/.m2/settings.xml`** (use a GitHub PAT with **`read:packages`** scope):
+
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>hdfgroup-github-packages</id>
+      <username>YOUR_GITHUB_USERNAME</username>
+      <password>YOUR_PAT</password>
+    </server>
+  </servers>
+</settings>
+```
+
+CI workflows use **`secrets.HDFGROUP_PACKAGES_USER`** and **`secrets.HDFGROUP_PACKAGES_TOKEN`** with
+`actions/setup-java` `server-id: hdfgroup-github-packages`.
+
 ## 1. Resolver sanity (`object`)
 
 ```bash

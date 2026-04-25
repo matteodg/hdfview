@@ -25,7 +25,8 @@
 
 **Decision**: Keep **HDF4** on existing **`jarhdf`** native-access wiring where present; **add** FFM policy for HDF5 without assuming one flag replaces both.
 
-**Rationale**: `run-hdfview.sh` today passes both `--enable-native-access=jarhdf5` and `--enable-native-access=jarhdf`; HDF4 JNI remains independent of HDF5 FFM.
+**Rationale**: Launch scripts use **`--enable-native-access=ALL-UNNAMED`** for HDF5 FFM and retain
+**`--enable-native-access=jarhdf`** for HDF4 JNI where applicable.
 
 **Alternatives considered**:
 
@@ -68,3 +69,33 @@
 **Alternatives considered**:
 
 - **Amend 002 artifacts in place** — unnecessary; 003 is the governing spec for removal.
+
+---
+
+## 8. Implementation inventory (speckit-implement, 2026-04-26)
+
+Git-tracked paths that referenced **`jarhdf5`** or **`--enable-native-access=jarhdf5`** before migration
+(product code, workflows, docs, and feature specs):
+
+- `.github/workflows/build-linux.yml`, `build-macos.yml`, `build-windows.yml`
+- `.github/workflows/ci-linux.yml`, `ci-macos.yml`, `ci-windows.yml`
+- `.github/workflows/maven-quality.yml`, `maven-security.yml`, `publish-maven-packages.yml`
+- `CLAUDE.md`, `README.md`
+- `hdfview/pom.xml`, `object/pom.xml`, `repository/pom.xml`
+- `object/src/main/java/hdf/object/h5/H5ScalarDS.java`
+- `object/src/main/java/module-info.java.disabled`, `object/src/test/java/module-info.java.disabled`
+- `object/src/test/java/object/TestComplexDatatype.java`
+- `run-hdfview.bat`, `run-hdfview.sh`
+- `specs/001-jdk-25-ffm/plan.md`, `specs/002-hdf5-maven-deps/*`, `specs/003-migrate-hdf5-ffm/*`
+
+## 9. Verified packaging — `dependency:get` (2026-04-26)
+
+| Artifact | Classifier | Resolver | Result |
+|------------|------------|----------|--------|
+| `org.hdfgroup:hdf5-java-ffm:2.2.0:jar` | `linux-x86_64` | Maven Central (`repo.maven.apache.org`) | **FAIL** — artifact not found (expected until Central publication). |
+| `org.hdfgroup:hdf5-native:2.2.0:jar` | `linux-x86_64` | Maven Central | **FAIL** — same. |
+
+**Mitigation merged in code**: Root `pom.xml` adds **`hdfgroup-github-packages`** repository
+(`https://maven.pkg.github.com/HDFGroup/hdf5`); CI and developers authenticate per **§0** in
+`quickstart.md`. Windows/Linux/mac profiles on `object` attach **`hdf5-java-ffm`** + **`hdf5-native`**
+at **2.2.0** for the active platform classifier.

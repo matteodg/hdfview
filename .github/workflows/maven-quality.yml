@@ -66,13 +66,15 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
+        server-id: hdfgroup-github-packages
+        server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+        server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
     - name: Cache Maven Dependencies
       uses: actions/cache@v4
       with:
         path: |
           ~/.m2/repository
-          !~/.m2/repository/org/hdfgroup
         key: ${{ runner.os }}-maven-quality-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-quality-
@@ -193,15 +195,7 @@ jobs:
         echo "JARs in repository/lib:"
         ls -la repository/lib/*.jar 2>/dev/null || echo "No JARs found"
 
-        # Install jarhdf5
-        HDF5_VERSION="${{ env.HDF5_VERSION }}"
-        if [ -f repository/lib/jarhdf5-*.jar ]; then
-          JAR_FILE=$(ls repository/lib/jarhdf5-*.jar | head -1)
-          mvn install:install-file -Dfile="$JAR_FILE" \
-            -DgroupId=jarhdf5 -DartifactId=jarhdf5 -Dversion=${HDF5_VERSION} \
-            -Dpackaging=jar -DgeneratePom=true
-          echo "Installed: $JAR_FILE"
-        fi
+        # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages; see pom.xml)
 
         # Install jarhdf (HDF4)
         HDF4_VERSION="${{ env.HDF4_VERSION }}"
@@ -315,7 +309,7 @@ jobs:
         mvn jacoco:prepare-agent test jacoco:report -B -pl object \
           -Dmaven.test.failure.ignore=false \
           -Djacoco.excludes="**/Test*,**/Mock*,**/Stub*" \
-          -DargLine="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.time.format=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --enable-native-access=jarhdf5 -Djava.library.path=${HDF5LIB_PATH}/lib"
+          -DargLine="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.time.format=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --enable-native-access=ALL-UNNAMED -Djava.library.path=${HDF5LIB_PATH}/lib"
         echo "::endgroup::"
 
     - name: Code Coverage Analysis

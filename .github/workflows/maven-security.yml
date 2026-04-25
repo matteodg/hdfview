@@ -35,6 +35,9 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
+        server-id: hdfgroup-github-packages
+        server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+        server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
     - name: Cache Maven Dependencies
       uses: actions/cache@v4
@@ -147,6 +150,9 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
+        server-id: hdfgroup-github-packages
+        server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+        server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
     - name: Cache Maven Dependencies
       uses: actions/cache@v4
@@ -254,14 +260,7 @@ jobs:
         echo "JARs in repository/lib:"
         ls -la repository/lib/*.jar 2>/dev/null || echo "No JARs found"
 
-        # Install jarhdf5
-        if [ -f repository/lib/jarhdf5-*.jar ]; then
-          JAR_FILE=$(ls repository/lib/jarhdf5-*.jar | head -1)
-          mvn install:install-file -Dfile="$JAR_FILE" \
-            -DgroupId=jarhdf5 -DartifactId=jarhdf5 -Dversion=2.0.0 \
-            -Dpackaging=jar -DgeneratePom=true
-          echo "Installed: $JAR_FILE"
-        fi
+        # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages)
 
         # Install jarhdf
         if [ -f repository/lib/jarhdf-*.jar ]; then

@@ -990,11 +990,11 @@ public class H5ScalarDS extends ScalarDS implements MetaDataContainer {
                                 H5Datatype baseType = (H5Datatype)dsDatatype.getDatatypeBase();
                                 if (baseType != null && baseType.isComplex()) {
                                     log.debug(
-                                        "scalarDatasetCommonIO(): VLEN complex dataset detected - unsupported by jarhdf5 2.0.0");
+                                        "scalarDatasetCommonIO(): VLEN complex dataset detected - unsupported by HDF5 Java binding");
                                     throw new HDF5Exception(
                                         "Variable-length complex datasets are not currently supported by the HDF5 library. "
                                         + "The data exists in the file but cannot be read or displayed. "
-                                        + "This is a known limitation of the jarhdf5 2.0.0 library.");
+                                        + "This is a known limitation of the current HDF5 Java binding.");
                                 }
 
                                 log.trace(

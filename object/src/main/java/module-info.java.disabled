@@ -12,6 +12,6 @@ module org.hdfgroup.object
     requires netcdf;
     requires fits;
     requires jarhdf;
-    requires jarhdf5;
+    // HDF5 Java FFM (org.hdfgroup:hdf5-java-ffm) — non-modular build; add explicit `requires` when module-info is re-enabled
     requires org.slf4j;
 }

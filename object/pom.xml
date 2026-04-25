@@ -70,12 +70,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>jarhdf5</groupId>
-            <artifactId>jarhdf5</artifactId>
-            <version>${hdf5.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>jarhdf</groupId>
             <artifactId>jarhdf</artifactId>
             <version>${hdf.version}</version>
@@ -190,7 +184,7 @@
                         --add-opens java.base/java.time=ALL-UNNAMED
                         --add-opens java.base/java.time.format=ALL-UNNAMED
                         --add-opens java.base/java.util=ALL-UNNAMED
-                        --enable-native-access=jarhdf5
+                        --enable-native-access=ALL-UNNAMED
                         -Djava.library.path=${platform.hdf.lib}
                     </argLine>
                 </configuration>
@@ -476,6 +470,70 @@
                     <groupId>org.hdfgroup</groupId>
                     <artifactId>hdf5-java-ffm</artifactId>
                     <classifier>windows-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>hdf5-org-hdfgroup-ffm-linux-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-native</artifactId>
+                    <classifier>linux-x86_64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-java-ffm</artifactId>
+                    <classifier>linux-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>hdf5-org-hdfgroup-ffm-macos-x86_64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-native</artifactId>
+                    <classifier>macos-x86_64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-java-ffm</artifactId>
+                    <classifier>macos-x86_64</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>hdf5-org-hdfgroup-ffm-macos-aarch64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-native</artifactId>
+                    <classifier>macos-aarch64</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.hdfgroup</groupId>
+                    <artifactId>hdf5-java-ffm</artifactId>
+                    <classifier>macos-aarch64</classifier>
                 </dependency>
             </dependencies>
         </profile>

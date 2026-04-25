@@ -199,7 +199,8 @@ set JVM_ARGS=--add-opens java.base/java.lang=ALL-UNNAMED
 set JVM_ARGS=%JVM_ARGS% --add-opens java.base/java.time=ALL-UNNAMED
 set JVM_ARGS=%JVM_ARGS% --add-opens java.base/java.time.format=ALL-UNNAMED
 set JVM_ARGS=%JVM_ARGS% --add-opens java.base/java.util=ALL-UNNAMED
-set JVM_ARGS=%JVM_ARGS% --enable-native-access=jarhdf5
+set JVM_ARGS=%JVM_ARGS% --enable-native-access=ALL-UNNAMED
+set JVM_ARGS=%JVM_ARGS% --enable-native-access=jarhdf
 set JVM_ARGS=%JVM_ARGS% -Djava.library.path=!hdf5_lib_dir!;!hdf_lib_dir!
 
 REM Parse command line arguments

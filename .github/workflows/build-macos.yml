@@ -91,13 +91,15 @@ jobs:
           with:
             java-version: '25'
             distribution: 'temurin'
+            server-id: hdfgroup-github-packages
+            server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+            server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
         - name: Cache Maven Dependencies
           uses: actions/cache@v4
           with:
             path: |
               ~/.m2/repository
-              !~/.m2/repository/org/hdfgroup
             key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
               ${{ runner.os }}-maven-
@@ -145,21 +147,10 @@ jobs:
             platform.hdf.lib=${{ env.HDF5LIB_PATH }}/lib
             EOF
 
-        - name: Install HDF5 JAR to Local Maven Repository
+        - name: Stage HDF5 JARs for reference (Java binding via org.hdfgroup)
           run: |
             mkdir -p repository/lib
-            cp ${{ env.HDF5LIB_PATH }}/lib/*.jar repository/lib/ 2>/dev/null || echo "No HDF5 JARs"
-            cd repository/lib
-
-            if [ ! -f jarhdf5-*.jar ]; then
-              echo "Error: jarhdf5 JAR file not found!"
-              exit 1
-            fi
-
-            JAR_FILE=$(ls jarhdf5-*.jar | head -1)
-            HDF5_VERSION=$(echo "$JAR_FILE" | sed -n 's/.*jarhdf5-\([0-9.]*\)\.jar/\1/p')
-            mvn install:install-file -Dfile="$JAR_FILE" -DgroupId=jarhdf5 -DartifactId=jarhdf5 -Dversion="$HDF5_VERSION" -Dpackaging=jar -DgeneratePom=true
-            echo "Installed: $JAR_FILE as version $HDF5_VERSION"
+            cp ${{ env.HDF5LIB_PATH }}/lib/*.jar repository/lib/ 2>/dev/null || echo "No HDF5 JARs in lib/"
 
         - name: Install HDF4 JAR to Local Maven Repository
           run: |

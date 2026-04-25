@@ -82,21 +82,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>jarhdf5</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>jarhdf5</groupId>
-                            <artifactId>jarhdf5</artifactId>
-                            <version>${hdf5.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/lib/jarhdf5-${hdf5.version}.jar</file>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>jarhdf</id>
                         <phase>verify</phase>
                         <goals>

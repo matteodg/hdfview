@@ -252,7 +252,7 @@ public class TestComplexDatatype {
      * Dimensions: 10
      *
      * NOTE: h5dump can successfully dump this dataset (see tcomplex.ddl),
-     * so the data exists in the file. However, the jarhdf5 2.0.0 library's
+     * so the data exists in the file. However, the HDF5 Java binding's
      * H5DreadVL does not properly handle complex base types, resulting in
      * empty ArrayLists. We detect this combination and throw an exception
      * with a user-friendly error message rather than silently failing.
@@ -269,7 +269,7 @@ public class TestComplexDatatype {
         System.out.println("\n=== Testing: Variable-length dataset with complex elements ===");
         System.out.println("Expected behavior: Opening succeeds, reading fails with clear error");
         System.out.println("Note: h5dump CAN read this data (see tcomplex.ddl),");
-        System.out.println("      but jarhdf5 2.0.0 H5DreadVL doesn't support VLEN complex\n");
+        System.out.println("      but H5DreadVL does not support VLEN complex in this Java binding\n");
 
         File file = new File(TEST_DIR + "tcomplex.h5");
         assertTrue(file.exists(), "Test file not found");
@@ -315,7 +315,7 @@ public class TestComplexDatatype {
                    "Exception message should mention 'Variable-length complex'");
         assertTrue(message.contains("not currently supported") || message.contains("not supported"),
                    "Exception message should indicate lack of support");
-        assertTrue(message.contains("jarhdf5") || message.contains("HDF5 library"),
+        assertTrue(message.contains("HDF5") || message.contains("library"),
                    "Exception message should mention the library");
 
         System.out.println("✓ Test passed: VLEN complex properly detected and reported");

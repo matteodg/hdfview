@@ -19,7 +19,7 @@
 
 **Purpose**: Baseline inventory for reviewers and implementers.
 
-- [ ] T001 [P] Append an **Implementation inventory** subsection to `specs/003-migrate-hdf5-ffm/research.md` listing paths that reference `jarhdf5` or `--enable-native-access=jarhdf5` (from `rg` across the repo, excluding `.git`).
+- [x] T001 [P] Append an **Implementation inventory** subsection to `specs/003-migrate-hdf5-ffm/research.md` listing paths that reference `jarhdf5` or `--enable-native-access=jarhdf5` (from `rg` across the repo, excluding `.git`).
 
 ---
 
@@ -29,14 +29,14 @@
 
 **⚠️ CRITICAL**: Blocks all user stories.
 
-- [ ] T002 Verify published **`hdf5-java-ffm`** / **`hdf5-native`** **2.2.0** artifacts resolve for each CI/host OS (minimum **Linux x86_64** for default CI); record exact `dependency:get` commands and outcomes in `specs/003-migrate-hdf5-ffm/research.md` (**Verified packaging** subsection).
-- [ ] T003 Extend root `pom.xml` `<dependencyManagement>` with paired **`hdf5-native`** + **`hdf5-java-ffm`** entries (pinned **2.2.0**) for each **non-Windows** classifier confirmed in T002 (follow existing `windows-x86_64` pattern).
-- [ ] T004 Add OS-activated `<profile>` blocks in `object/pom.xml` that attach **`org.hdfgroup:hdf5-native`** + **`org.hdfgroup:hdf5-java-ffm`** for each platform from T003 (mirror `hdf5-org-hdfgroup-ffm-windows-amd64` / `hdf5-org-hdfgroup-ffm-windows-x86_64` style).
-- [ ] T005 Remove the compile `<dependency>` on **`jarhdf5:jarhdf5`** from `object/pom.xml` (default `<dependencies>` block) once T004 covers every platform that compiles `object`.
-- [ ] T006 [P] Replace `--enable-native-access=jarhdf5` with `--enable-native-access=ALL-UNNAMED` in `object/pom.xml` Surefire `<argLine>` configuration.
-- [ ] T007 [P] Replace `--enable-native-access=jarhdf5` with `--enable-native-access=ALL-UNNAMED` in `hdfview/pom.xml` Surefire (or shared test JVM) `<argLine>` configuration (~line 836 region).
-- [ ] T008 [P] Update `run-hdfview.sh` JVM args: use **`--enable-native-access=ALL-UNNAMED`** for HDF5 FFM per `specs/003-migrate-hdf5-ffm/research.md` §2; retain **`--enable-native-access=jarhdf`** for HDF4 if still required.
-- [ ] T009 [P] Update `run-hdfview.bat` JVM args: same FFM policy as `run-hdfview.sh` (`run-hdfview.bat`).
+- [x] T002 Verify published **`hdf5-java-ffm`** / **`hdf5-native`** **2.2.0** artifacts resolve for each CI/host OS (minimum **Linux x86_64** for default CI); record exact `dependency:get` commands and outcomes in `specs/003-migrate-hdf5-ffm/research.md` (**Verified packaging** subsection).
+- [x] T003 Extend root `pom.xml` `<dependencyManagement>` with paired **`hdf5-native`** + **`hdf5-java-ffm`** entries (pinned **2.2.0**) for each **non-Windows** classifier confirmed in T002 (follow existing `windows-x86_64` pattern).
+- [x] T004 Add OS-activated `<profile>` blocks in `object/pom.xml` that attach **`org.hdfgroup:hdf5-native`** + **`org.hdfgroup:hdf5-java-ffm`** for each platform from T003 (mirror `hdf5-org-hdfgroup-ffm-windows-amd64` / `hdf5-org-hdfgroup-ffm-windows-x86_64` style).
+- [x] T005 Remove the compile `<dependency>` on **`jarhdf5:jarhdf5`** from `object/pom.xml` (default `<dependencies>` block) once T004 covers every platform that compiles `object`.
+- [x] T006 [P] Replace `--enable-native-access=jarhdf5` with `--enable-native-access=ALL-UNNAMED` in `object/pom.xml` Surefire `<argLine>` configuration.
+- [x] T007 [P] Replace `--enable-native-access=jarhdf5` with `--enable-native-access=ALL-UNNAMED` in `hdfview/pom.xml` Surefire (or shared test JVM) `<argLine>` configuration (~line 836 region).
+- [x] T008 [P] Update `run-hdfview.sh` JVM args: use **`--enable-native-access=ALL-UNNAMED`** for HDF5 FFM per `specs/003-migrate-hdf5-ffm/research.md` §2; retain **`--enable-native-access=jarhdf`** for HDF4 if still required.
+- [x] T009 [P] Update `run-hdfview.bat` JVM args: same FFM policy as `run-hdfview.sh` (`run-hdfview.bat`).
 
 **Checkpoint**: `mvn -q -DskipTests compile -pl object` succeeds on Linux + Windows with **no** `jarhdf5:jarhdf5` on the dependency tree.
 
@@ -50,16 +50,16 @@
 
 ### Implementation for User Story 2
 
-- [ ] T010 [US2] Remove or replace the **`jarhdf5`** `maven-install-plugin` / `install-file` execution in `repository/pom.xml` so a standard build does not publish **`jarhdf5:jarhdf5`** into `~/.m2`.
-- [ ] T011 [P] [US2] Update `.github/workflows/ci-linux.yml` to drop **`jarhdf5`** `install-file` steps when org.hdfgroup artifacts supply HDF5 Java (`ci-linux.yml`).
-- [ ] T012 [P] [US2] Update `.github/workflows/maven-quality.yml`: remove **`jarhdf5`** install block (~196–206) and set Surefire `argLine` to **`--enable-native-access=ALL-UNNAMED`** (~318) (`maven-quality.yml`).
-- [ ] T013 [P] [US2] Update `.github/workflows/maven-security.yml` **`jarhdf5`** install-file section (~257–266) (`maven-security.yml`).
-- [ ] T014 [P] [US2] Update `.github/workflows/ci-windows.yml` **`jarhdf5`** install-file section (~189–196) (`ci-windows.yml`).
-- [ ] T015 [P] [US2] Update `.github/workflows/ci-macos.yml` **`jarhdf5`** install-file section (~172–177) (`ci-macos.yml`).
-- [ ] T016 [P] [US2] Update `.github/workflows/build-linux.yml` **`jarhdf5`** install-file section (~183–188) (`build-linux.yml`).
-- [ ] T017 [P] [US2] Update `.github/workflows/build-windows.yml` **`jarhdf5`** install-file blocks (~193–198 and ~449–454) (`build-windows.yml`).
-- [ ] T018 [P] [US2] Update `.github/workflows/build-macos.yml` **`jarhdf5`** download/install (~154–161) (`build-macos.yml`).
-- [ ] T019 [US2] Rework `.github/workflows/publish-maven-packages.yml` HDF5 Java acquisition (~104–133) so it does not publish **`jarhdf5:jarhdf5`** as the supported HDF5 Java line (`publish-maven-packages.yml`).
+- [x] T010 [US2] Remove or replace the **`jarhdf5`** `maven-install-plugin` / `install-file` execution in `repository/pom.xml` so a standard build does not publish **`jarhdf5:jarhdf5`** into `~/.m2`.
+- [x] T011 [P] [US2] Update `.github/workflows/ci-linux.yml` to drop **`jarhdf5`** `install-file` steps when org.hdfgroup artifacts supply HDF5 Java (`ci-linux.yml`).
+- [x] T012 [P] [US2] Update `.github/workflows/maven-quality.yml`: remove **`jarhdf5`** install block (~196–206) and set Surefire `argLine` to **`--enable-native-access=ALL-UNNAMED`** (~318) (`maven-quality.yml`).
+- [x] T013 [P] [US2] Update `.github/workflows/maven-security.yml` **`jarhdf5`** install-file section (~257–266) (`maven-security.yml`).
+- [x] T014 [P] [US2] Update `.github/workflows/ci-windows.yml` **`jarhdf5`** install-file section (~189–196) (`ci-windows.yml`).
+- [x] T015 [P] [US2] Update `.github/workflows/ci-macos.yml` **`jarhdf5`** install-file section (~172–177) (`ci-macos.yml`).
+- [x] T016 [P] [US2] Update `.github/workflows/build-linux.yml` **`jarhdf5`** install-file section (~183–188) (`build-linux.yml`).
+- [x] T017 [P] [US2] Update `.github/workflows/build-windows.yml` **`jarhdf5`** install-file blocks (~193–198 and ~449–454) (`build-windows.yml`).
+- [x] T018 [P] [US2] Update `.github/workflows/build-macos.yml` **`jarhdf5`** download/install (~154–161) (`build-macos.yml`).
+- [x] T019 [US2] Rework `.github/workflows/publish-maven-packages.yml` HDF5 Java acquisition (~104–133) so it does not publish **`jarhdf5:jarhdf5`** as the supported HDF5 Java line (`publish-maven-packages.yml`).
 
 **Checkpoint**: CI configs align with **B1–B3** in `specs/003-migrate-hdf5-ffm/contracts/single-hdf5-java-binding.md`.
 
@@ -73,10 +73,10 @@
 
 ### Verification & fixes for User Story 1
 
-- [ ] T020 [US1] Run `mvn -q -DskipTests dependency:tree -pl object` and confirm **B1** (**no** `jarhdf5:jarhdf5`, **`hdf5-java-ffm:2.2.0`** present) in `specs/003-migrate-hdf5-ffm/contracts/single-hdf5-java-binding.md`.
+- [x] T020 [US1] Run `mvn -q -DskipTests dependency:tree -pl object` and confirm **B1** (**no** `jarhdf5:jarhdf5`, **`hdf5-java-ffm:2.2.0`** present) in `specs/003-migrate-hdf5-ffm/contracts/single-hdf5-java-binding.md`.
 - [ ] T021 [US1] Run `mvn -q test -pl object` with HDF5 native paths configured (`build.properties` / CI `platform.hdf.lib`); triage failures against spec edge cases (`specs/003-migrate-hdf5-ffm/spec.md` §Edge Cases).
-- [ ] T022 [P] [US1] Update user-visible HDF5 limitation strings in `object/src/main/java/hdf/object/h5/H5ScalarDS.java` that name **`jarhdf5 2.0.0`** so they describe the current binding accurately (`H5ScalarDS.java`).
-- [ ] T023 [P] [US1] Align test expectations/messages in `object/src/test/java/object/TestComplexDatatype.java` with FFM-backed behavior (`TestComplexDatatype.java`).
+- [x] T022 [P] [US1] Update user-visible HDF5 limitation strings in `object/src/main/java/hdf/object/h5/H5ScalarDS.java` that name **`jarhdf5 2.0.0`** so they describe the current binding accurately (`H5ScalarDS.java`).
+- [x] T023 [P] [US1] Align test expectations/messages in `object/src/test/java/object/TestComplexDatatype.java` with FFM-backed behavior (`TestComplexDatatype.java`).
 - [ ] T024 [US1] Manual smoke: launch via `run-hdfview.sh` / `run-hdfview.bat` and open/browse at least one HDF5 sample per [quickstart.md](./quickstart.md) §4 (`run-hdfview.sh`, `run-hdfview.bat`).
 
 **Checkpoint**: **SC-001** / **SC-004** evidence captured (test log + manual note in PR).
@@ -91,10 +91,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T025 [P] [US3] Update HDF5 Java / JVM flag guidance in `CLAUDE.md` (HDF5 **2.2.0** FFM, **`--enable-native-access=ALL-UNNAMED`**, remove **`jarhdf5`**-centric examples) (`CLAUDE.md`).
-- [ ] T026 [P] [US3] Update contributor-facing HDF5 sections in `README.md` to describe **`org.hdfgroup:hdf5-java-ffm`** workflow, not **`jarhdf5`** Windows profile (`README.md`).
-- [ ] T027 [US3] Reconcile **`002`** contributor quickstart with **`003`**: update `specs/002-hdf5-maven-deps/quickstart.md` (or add a supersession note pointing to `specs/003-migrate-hdf5-ffm/quickstart.md`) so readers are not instructed to keep **`jarhdf5`** for standard HDF5 (`specs/002-hdf5-maven-deps/quickstart.md`).
-- [ ] T028 [P] [US3] If modular metadata is ever re-enabled, update `object/src/main/java/module-info.java.disabled` and `object/src/test/java/module-info.java.disabled` to remove `requires jarhdf5;` or replace with the FFM JAR’s module name once known (`module-info.java.disabled` files under `object/`).
+- [x] T025 [P] [US3] Update HDF5 Java / JVM flag guidance in `CLAUDE.md` (HDF5 **2.2.0** FFM, **`--enable-native-access=ALL-UNNAMED`**, remove **`jarhdf5`**-centric examples) (`CLAUDE.md`).
+- [x] T026 [P] [US3] Update contributor-facing HDF5 sections in `README.md` to describe **`org.hdfgroup:hdf5-java-ffm`** workflow, not **`jarhdf5`** Windows profile (`README.md`).
+- [x] T027 [US3] Reconcile **`002`** contributor quickstart with **`003`**: update `specs/002-hdf5-maven-deps/quickstart.md` (or add a supersession note pointing to `specs/003-migrate-hdf5-ffm/quickstart.md`) so readers are not instructed to keep **`jarhdf5`** for standard HDF5 (`specs/002-hdf5-maven-deps/quickstart.md`).
+- [x] T028 [P] [US3] If modular metadata is ever re-enabled, update `object/src/main/java/module-info.java.disabled` and `object/src/test/java/module-info.java.disabled` to remove `requires jarhdf5;` or replace with the FFM JAR’s module name once known (`module-info.java.disabled` files under `object/`).
 
 **Checkpoint**: **FR-005** / doc independent test satisfied.
 
@@ -105,7 +105,7 @@
 **Purpose**: Repo-wide hygiene and acceptance checklist.
 
 - [ ] T029 Run every step in `specs/003-migrate-hdf5-ffm/quickstart.md` and fix any gaps discovered (`quickstart.md` as checklist driver).
-- [ ] T030 [P] Repo-wide sanity: from repository root, `rg "jarhdf5"` on product surfaces (`*.xml`, `*.yml`, `*.sh`, `*.bat`, `*.md`) — **zero** `groupId>jarhdf5` / `install-file` for **`jarhdf5`** except explicitly marked historical notes (document residual hits in PR if any).
+- [x] T030 [P] Repo-wide sanity: from repository root, `rg "jarhdf5"` on product surfaces (`*.xml`, `*.yml`, `*.sh`, `*.bat`, `*.md`) — **zero** `groupId>jarhdf5` / `install-file` for **`jarhdf5`** except explicitly marked historical notes (document residual hits in PR if any).
 
 ---
 

@@ -69,13 +69,15 @@ jobs:
           with:
             java-version: '25'
             distribution: 'temurin'
+            server-id: hdfgroup-github-packages
+            server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+            server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
         - name: Cache Maven Dependencies
           uses: actions/cache@v4
           with:
             path: |
               ~/.m2/repository
-              !~/.m2/repository/org/hdfgroup
             key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
               ${{ runner.os }}-maven-
@@ -180,16 +182,7 @@ jobs:
             # Manually install each JAR to local Maven repository
             # This bypasses the repository module's POM and avoids PMD issues
 
-            # Install jarhdf5 (extract version from filename)
-            if [ -f repository/lib/jarhdf5-*.jar ]; then
-            JAR_FILE=$(ls repository/lib/jarhdf5-*.jar | head -1)
-            HDF5_VERSION=$(echo "$JAR_FILE" | sed -n 's/.*jarhdf5-\([0-9.]*\)\.jar/\1/p')
-            mvn install:install-file -Dfile="$JAR_FILE" \
-                -DgroupId=jarhdf5 -DartifactId=jarhdf5 -Dversion="$HDF5_VERSION" \
-                -Dpackaging=jar -DgeneratePom=true
-            echo "Installed: $JAR_FILE as version $HDF5_VERSION"
-            echo "HDF5_VERSION=$HDF5_VERSION" >> $GITHUB_ENV
-            fi
+            # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages; see root pom.xml)
 
             # Install jarhdf (extract version from filename)
             if [ -f repository/lib/jarhdf-*.jar ]; then

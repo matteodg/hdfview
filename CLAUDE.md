@@ -138,11 +138,13 @@ mvn test -pl hdfview -Dtest=TestClassName
 - **Build System**: Maven-only (Ant build removed in Phase 1 migration)
 - **Build Properties**: External configuration loaded via properties-maven-plugin from `build.properties`
 - **Native Libraries**: HDF4/HDF5 native libraries required (paths configured in `build.properties`)
-- **HDF5 2.2.0 (org.hdfgroup, Java FFM)**: On **64-bit Windows** (`amd64` / `x86_64`), the `object`
-  module resolves **`org.hdfgroup:hdf5-native:2.2.0`** and **`org.hdfgroup:hdf5-java-ffm:2.2.0`**
-  with classifier **`windows-x86_64`** (see root `pom.xml` `dependencyManagement`). Other platforms
-  follow the same **per-platform classifier** pattern when profiles are added. Contributor flow:
-  `README.md` (overview) and **`specs/002-hdf5-maven-deps/quickstart.md`** (commands).
+- **HDF5 2.2.0 (org.hdfgroup, Java FFM)**: The `object` module resolves **`org.hdfgroup:hdf5-native:2.2.0`**
+  and **`org.hdfgroup:hdf5-java-ffm:2.2.0`** with the **active OS** classifier (e.g. **`windows-x86_64`**,
+  **`linux-x86_64`**, **`macos-aarch64`**) via `object/pom.xml` profiles and root `dependencyManagement`.
+  Root `pom.xml` declares **`hdfgroup-github-packages`** (`https://maven.pkg.github.com/HDFGroup/hdf5`);
+  CI uses **`HDFGROUP_PACKAGES_USER`** / **`HDFGROUP_PACKAGES_TOKEN`** (PAT with `read:packages`) in
+  `~/.m2/settings.xml` via `actions/setup-java`. Contributor flow: `README.md`,
+  **`specs/003-migrate-hdf5-ffm/quickstart.md`**, and **`specs/002-hdf5-maven-deps/quickstart.md`** (resolution checks).
 - **Module System**: Disabled temporarily (non-modular build for SWT compatibility)
 
 ### Maven Plugins Integrated
@@ -255,8 +257,10 @@ The project consists of three main Maven modules:
   ```
   --add-opens java.base/java.lang=ALL-UNNAMED
   --add-opens java.base/java.time=ALL-UNNAMED
-  --enable-native-access=jarhdf5
+  --enable-native-access=ALL-UNNAMED
+  --enable-native-access=jarhdf
   ```
+  (`ALL-UNNAMED` for HDF5 **hdf5-java-ffm** FFM; **`jarhdf`** remains for HDF4 JNI where applicable.)
 - **Run Tests**:
   ```bash
   mvn test                          # Run all tests

@@ -85,15 +85,15 @@ The **`object`** module can resolve **The HDF Group**’s published **HDF5 2.2.0
 exact GAV + classifier) or use a corporate mirror. **After Central**: the same coordinates resolve
 from the default public repository—no POM version change required.
 
-Detailed commands and checks: **`specs/002-hdf5-maven-deps/quickstart.md`**.
+Detailed commands and checks: **`specs/002-hdf5-maven-deps/quickstart.md`** and
+**`specs/003-migrate-hdf5-ffm/quickstart.md`** (post–JNI migration).
 
 ### Native precedence (Windows)
 
-HDFView still copies HDF5 JNI DLLs from **`hdf5.lib.dir`** (see `build.properties`) via the existing
-**Windows** profile in `object/pom.xml` for **`jarhdf5`**. The org.hdfgroup **`hdf5-native`** JAR
-also carries **bundled** HDF5 for the **FFM / SciJava native-lib-loader** classpath path. Prefer
-**aligning `hdf5.lib.dir` with HDF5 2.2.0** while both stacks are present, or plan migration off JNI,
-to reduce risk of loading **two incompatible `hdf5.dll`** builds.
+HDF5 Java access uses **`org.hdfgroup:hdf5-java-ffm`** only (legacy **`jarhdf5`** Maven coordinate removed).
+The org.hdfgroup **`hdf5-native`** JAR carries **bundled** HDF5 natives for the FFM classpath path.
+Keep **`hdf5.lib.dir`** in `build.properties` aligned with **HDF5 2.2.x** for any tooling that still reads
+installed DLLs from disk, and to avoid mixing **incompatible `hdf5.dll`** builds with the bundled native line.
 
 ### Optional `hdfview` unpack of `hdf5-native`
 

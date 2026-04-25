@@ -61,13 +61,15 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
+        server-id: hdfgroup-github-packages
+        server-username: ${{ secrets.HDFGROUP_PACKAGES_USER }}
+        server-password: ${{ secrets.HDFGROUP_PACKAGES_TOKEN }}
 
     - name: Cache Maven Dependencies
       uses: actions/cache@v4
       with:
         path: |
           ~/.m2/repository
-          !~/.m2/repository/org/hdfgroup
         key: ${{ runner.os }}-maven-${{ hashFiles('pom.xml', 'object/pom.xml', 'hdfview/pom.xml', 'repository/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
@@ -186,15 +188,7 @@ jobs:
           Write-Host "No JARs found"
         }
 
-        # Install jarhdf5
-        $HDF5_VERSION = "${{ inputs.hdf5_version }}"
-        $jarhdf5 = Get-ChildItem "repository\lib\jarhdf5-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
-        if ($jarhdf5) {
-          mvn install:install-file "-Dfile=$($jarhdf5.FullName)" `
-            "-DgroupId=jarhdf5" "-DartifactId=jarhdf5" "-Dversion=$HDF5_VERSION" `
-            "-Dpackaging=jar" "-DgeneratePom=true"
-          Write-Host "Installed: $($jarhdf5.Name)"
-        }
+        # HDF5 Java: org.hdfgroup:hdf5-java-ffm (GitHub Packages)
 
         # Install jarhdf
         $HDF4_VERSION = "${{ inputs.hdf4_version }}"

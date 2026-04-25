@@ -1,7 +1,11 @@
 # Quickstart: verify HDF5 2.2.0 org.hdfgroup artifacts (per-platform classifiers)
 
+**Update (003)**: HDFView no longer uses the legacy **`jarhdf5:jarhdf5`** coordinate; HDF5 Java is
+**`org.hdfgroup:hdf5-java-ffm`** only. See **`specs/003-migrate-hdf5-ffm/quickstart.md`** for the
+post-migration verification checklist and GitHub Packages authentication notes.
+
 Prerequisites: **JDK 25** and Maven per repository baseline; artifacts available to your resolver
-(local install, mirror, or Maven Central).
+(GitHub Packages with PAT, local `~/.m2`, mirror, or Maven Central when published).
 
 ## 1. Confirm platform
 
@@ -35,23 +39,23 @@ mvn clean compile -DskipTests
 Expected: Windows profile activates; build completes if other prerequisites (`build.properties`,
 HDF4 paths, etc.) remain satisfied per existing project rules.
 
-## 5. Linux CI spot-check (from any OS)
+## 5. Linux / macOS spot-check (from any OS)
 
 ```bash
 mvn -q -DskipTests validate
 ```
 
-Expected: Linux jobs do not resolve **`hdf5-java-ffm`** classifiers for **inactive** foreign
-platforms (e.g. **`windows-x86_64`** when no Windows profile is active).
+Expected: **inactive** foreign classifiers are not pulled (e.g. **`windows-x86_64`** on Linux).
 
-Also run (Linux / macOS default profile):
+On **Linux amd64** or **macOS** with GitHub Packages credentials configured (see root `pom.xml`
+`<repositories>` and `README.md`):
 
 ```bash
 mvn -q -DskipTests dependency:tree -pl object
 ```
 
-Confirm **`org.hdfgroup:hdf5-java-ffm`** does **not** appear when the Windows FFM profiles are
-inactive.
+Expect **`org.hdfgroup:hdf5-java-ffm:jar:…:2.2.0:compile`** with the **host** classifier
+(**`linux-x86_64`**, **`macos-aarch64`**, etc.) and **no** `jarhdf5:jarhdf5`.
 
 ## 6. When artifacts are missing (expected Maven output)
 

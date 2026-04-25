@@ -13,6 +13,20 @@
     <module>hdfview</module>
   </modules>
 
+  <!-- org.hdfgroup HDF5 Java artifacts (FFM) publish to GitHub Packages before Maven Central; see README / CLAUDE.md -->
+  <repositories>
+    <repository>
+      <id>hdfgroup-github-packages</id>
+      <url>https://maven.pkg.github.com/HDFGroup/hdf5</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <properties>
     <!-- argLine not defined here - set by JaCoCo prepare-agent and/or CLI -->
     <maven.compiler.source>25</maven.compiler.source>
@@ -112,6 +126,42 @@
         <artifactId>hdf5-java-ffm</artifactId>
         <version>${hdfgroup.hdf5.java.ffm.version}</version>
         <classifier>windows-x86_64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-native</artifactId>
+        <version>${hdfgroup.hdf5.native.version}</version>
+        <classifier>linux-x86_64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-java-ffm</artifactId>
+        <version>${hdfgroup.hdf5.java.ffm.version}</version>
+        <classifier>linux-x86_64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-native</artifactId>
+        <version>${hdfgroup.hdf5.native.version}</version>
+        <classifier>macos-x86_64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-java-ffm</artifactId>
+        <version>${hdfgroup.hdf5.java.ffm.version}</version>
+        <classifier>macos-x86_64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-native</artifactId>
+        <version>${hdfgroup.hdf5.native.version}</version>
+        <classifier>macos-aarch64</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hdfgroup</groupId>
+        <artifactId>hdf5-java-ffm</artifactId>
+        <version>${hdfgroup.hdf5.java.ffm.version}</version>
+        <classifier>macos-aarch64</classifier>
       </dependency>
     </dependencies>
   </dependencyManagement>
