@@ -30,8 +30,8 @@ From the repository root:
 mvn clean compile -DskipTests
 ```
 
-If the active JDK is too old, Maven Enforcer (once the feature is implemented) MUST fail with an
-explicit **Java 25 required** message.
+If the active JDK is too old, Maven Enforcer (once the feature is implemented) MUST fail with the
+configured rule message (e.g. **Java 25 or newer is required to build HDFView.**).
 
 ## 5. Optional: launcher smoke check
 

@@ -1,11 +1,14 @@
 <!--
 Sync Impact Report
-- Version change: N/A → 1.0.0
-- Modified principles: N/A (template initialization)
-- Added sections: Engineering Standards, Development Workflow
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: I. Build & Tooling Consistency (Java 21 → Java 25); Engineering Standards
+  (Language/Runtime Java 21 → Java 25)
+- Added sections: None
 - Removed sections: None
+- Prior release (retained for history): N/A → 1.0.0 initial constitution; Engineering Standards and
+  Development Workflow added at 1.0.0
 - Templates requiring updates:
-  - ✅ d:\c\hdfview\.specify\templates\tasks-template.md (align test guidance with constitution)
+  - ✅ d:\c\hdfview\.specify\templates\tasks-template.md (verified aligned at 1.0.0)
   - ✅ d:\c\hdfview\.specify\templates\plan-template.md (no change needed)
   - ✅ d:\c\hdfview\.specify\templates\spec-template.md (no change needed)
   - ✅ d:\c\hdfview\.specify\templates\constitution-template.md (no change needed)
@@ -17,8 +20,8 @@ Sync Impact Report
 
 ## Core Principles
 
-### I. Build & Tooling Consistency (Maven-only, Java 21)
-All changes MUST keep the repository buildable with Maven and Java 21.
+### I. Build & Tooling Consistency (Maven-only, Java 25)
+All changes MUST keep the repository buildable with Maven and Java 25.
 
 - Build and packaging MUST use Maven (Ant is not supported).
 - Changes MUST respect the existing multi-module structure (`repository/`, `object/`, `hdfview/`).
@@ -60,7 +63,7 @@ Changes MUST maintain the project’s quality and be understandable to maintaine
 
 ## Engineering Standards
 
-- **Language/Runtime**: Java 21.
+- **Language/Runtime**: Java 25.
 - **Build System**: Maven (multi-module).
 - **UI**: SWT/NatTable (platform differences are expected; validate on target platforms when
   applicable).
@@ -95,4 +98,4 @@ Changes MUST maintain the project’s quality and be understandable to maintaine
 
 Guidance references: `CLAUDE.md` (developer workflow and build/test notes).
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-04-26
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-04-26

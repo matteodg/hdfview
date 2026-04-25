@@ -48,9 +48,9 @@ and CI parity (see T011, T030).
 **⚠️ CRITICAL**: Do not merge JDK **25** build pins while `.specify/memory/constitution.md` still
 requires Java **21**.
 
-- [ ] T003 Update Java **25** baseline language, Sync Impact Report, and semver bump in
+- [ ] T003 Verify Java **25** baseline language, Sync Impact Report, and semver (**≥1.1.0**) in
   `.specify/memory/constitution.md` (Principle I + Engineering Standards; align with governance
-  rules in that file).
+  rules in that file). If already amended on this branch, re-check diff and **Last Amended** date only.
 
 ---
 
@@ -73,8 +73,10 @@ JDK **24**, Enforcer emits an explicit **Java 25 required** failure (per **FR-00
   the `maven-compiler-plugin` configuration.
 - [ ] T009 [US1] Set compiler `<source>`, `<target>`, and `<release>` to **25** in `hdfview/pom.xml` for
   the `maven-compiler-plugin` configuration.
-- [ ] T010 [US1] Add `requireJavaVersion` (minimum **1.25**) to `maven-enforcer-plugin` in root `pom.xml`
-  without removing existing HDF-related enforcer executions.
+- [ ] T010 [US1] Add `requireJavaVersion` with version **`[25,)`** (or **`25`** per Enforcer docs) to
+  `maven-enforcer-plugin` in root `pom.xml`, with a custom `<message>` (e.g. **Java 25 or newer is
+  required to build HDFView.**); do **not** use **`1.25`** as the version string. Preserve existing
+  HDF-related enforcer executions.
 - [ ] T011 [US1] From repo root on JDK **25**, run `mvn clean compile -DskipTests` and fix any
   compilation issues until green.
 
@@ -135,7 +137,8 @@ push show `setup-java` selecting **25**.
 **Purpose**: Stragglers, packaging alignment, and broader validation.
 
 - [ ] T027 [P] Repo-wide search for `java-version: '21'`, `Java 21`, `JDK 21`, and `Java 21+`; fix any
-  remaining **minimum** requirement strings (including misleading comments in `pom.xml`).
+  remaining **minimum** requirement strings (including `README.md`, `CLAUDE.md`, and misleading
+  comments in `pom.xml`).
 - [ ] T028 Re-read `specs/001-jdk-25-ffm/quickstart.md` against final `pom.xml` Enforcer behavior and
   update if commands or failure messages changed.
 - [ ] T029 Audit `hdfview/pom.xml` and root `pom.xml` for **jpackage** / release installer profiles;
@@ -217,4 +220,5 @@ Task: "Update .github/workflows/ci-windows.yml …"
 - **Per story**: US1 → 8 tasks (T004–T011, all labeled `[US1]`); US2 → 9 tasks (T012–T020); US3 → 6
   tasks (T021–T026); Setup 2; Foundational 1; Polish 4 (T027–T030).
 - **Format**: Every implementation line uses `- [ ]`, sequential `Txxx`, optional `[P]`, story
-  label only in US phases **T011–T026**, and an explicit file path.
+  labels **`[US1]`** on **T004–T011**, **`[US2]`** on **T012–T020**, **`[US3]`** on **T021–T026**
+  (no story labels on setup, foundational, or polish phases), and an explicit file path.
