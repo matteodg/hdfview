@@ -86,8 +86,9 @@ classifier.
   before compile/link/runtime.
 - **Multiple HDF5 versions** on the machine: the build must not accidentally pick up a system-wide
   install when the intent is the 2.2.0 artifact line for the scoped path.
-- **Non-Windows or non-x86_64** developers: behavior must remain defined (unchanged legacy path or
-  documented gap) without breaking their existing supported workflow.
+- **Platforms without an active Maven profile** for their `hdf5-java-ffm` classifier: behavior must
+  remain defined (unchanged legacy path or documented gap) without breaking their existing supported
+  workflow, and inactive profiles must not pull **foreign** platform classifiers.
 - **Pre-central period**: contributors may need a one-time install into local cache or an internal
   mirror; docs should say so without implying the artifacts are universally public yet.
 
@@ -98,22 +99,28 @@ classifier.
 - **FR-001**: The project MUST declare a dependency on **`org.hdfgroup:hdf5-native:2.2.0`** so that
   HDF5 native material for the build is sourced from that published line.
 - **FR-002**: The project MUST declare a dependency on **`org.hdfgroup:hdf5-java-ffm:2.2.0`** with
-  classifier **`windows-x86_64`** so that Java FFM bindings for HDF5 on 64-bit Windows are sourced
-  from that published line.
-- **FR-003**: Dependency resolution for the Windows x86_64 FFM artifact MUST **not** silently fall
-  back to a different version or classifier when 2.2.0 / `windows-x86_64` is intended.
+  the **platform classifier** that matches the build target OS and CPU architecture. The user
+  supplied **`windows-x86_64`** as the canonical example for 64-bit Windows; **other platforms are
+  assumed to have correspondent classifiers** published by HDF Group for the same artifact and
+  version (same GAV except classifier).
+- **FR-003**: Dependency resolution for the **intended** `hdf5-java-ffm` platform classifier MUST
+  **not** silently fall back to a different version or classifier when **2.2.0** and that classifier
+  are intended.
 - **FR-004**: Contributor-facing documentation MUST mention that these coordinates may initially
   resolve only from a **local cache or private mirror**, and later from the **central package
   repository**, without changing the declared version or identifiers for this feature.
-- **FR-005**: Where other platforms or architectures still use existing native setup, documentation
-  MUST clarify scope so users do not assume every OS now uses the new artifacts.
+- **FR-005**: Documentation MUST state the **one-classifier-per-target-platform** rule for
+  **`hdf5-java-ffm`** (with **`windows-x86_64`** as the documented example) and MUST clarify which
+  platforms are wired in this delivery versus deferred, so readers do not assume a single classifier
+  applies to every OS or that every OS is wired in the same change set.
 
 ### Key Entities
 
 - **HDF5 native artifact (`hdf5-native`)**: The published bundle that supplies native HDF5 binaries
   for the build at version **2.2.0** under group **`org.hdfgroup`**.
 - **HDF5 Java FFM artifact (`hdf5-java-ffm`)**: The published Java bindings using FFM for HDF5 at
-  version **2.2.0**, with platform-specific classifiers (here **Windows x86_64**).
+  version **2.2.0**, with **one platform classifier per OS/arch** (example: **`windows-x86_64`**;
+  other platforms use their **correspondent** HDF Group classifiers at the same version).
 - **Resolver visibility**: Where the artifacts are found today (local/mirror) versus later
   (central), holding identifiers constant.
 
@@ -122,23 +129,27 @@ classifier.
 ### Measurable Outcomes
 
 - **SC-001**: On a reference Windows x86_64 environment configured per updated docs, **100%** of
-  standard “fetch build dependencies” checks show **2.2.0** resolved for both the native and Java
-  FFM artifact identifiers in scope for this feature (no drift to another version in that check).
+  the **documented** “fetch build dependencies” checks (the exact commands listed in
+  `specs/002-hdf5-maven-deps/quickstart.md` after implementation, e.g. `dependency:tree` /
+  `dependency:get` for the two coordinates) show **2.2.0** resolved for both the native and Java FFM
+  artifact identifiers in scope for this feature (no drift to another version in that check).
 - **SC-002**: **100%** of sampled documentation paths that describe HDF5 acquisition for Windows
   x86_64 name the **same** org.hdfgroup identifiers and **2.2.0** version (no stale conflicting
   version numbers in the same doc set for that path).
 - **SC-003**: Published contributor or maintainer notes include a **single short passage** (roughly
   one screen or less) that states how resolution works **before** central publishing versus
-  **after**, without changing the declared **2.2.0** coordinates or identifiers for the Windows
-  x86_64 line.
+  **after**, without changing the declared **2.2.0** coordinates or the **per-platform classifier
+  pattern** (using the Windows x86_64 line as the worked example).
 
 ## Assumptions
 
 - **Build system** for declaring dependencies remains the repository’s current Java build (no change
   of build tool required by this specification alone).
-- **Scope** for new coordinates is the **Windows x86_64** Java FFM classifier the user supplied;
-  other classifiers or platforms may continue to use existing native-library documentation until a
-  follow-up feature extends the same pattern.
+- **Platform classifiers**: HDF Group is assumed to publish **`hdf5-java-ffm:2.2.0`** with a
+  **correspondent classifier per target platform** (same scheme as **`windows-x86_64`** for
+  64-bit Windows). This delivery may wire **one or more** platforms; the user-supplied classifier
+  is the **reference** for Windows x86_64. Platforms not yet wired may keep existing
+  `build.properties` / `hdf5.lib.dir` documentation until the same Maven pattern is extended.
 - **Version 2.2.0** is the single supported line for this adoption; bumping to a newer HDF5 release
   is out of scope unless explicitly requested later.
 - Artifacts are **trusted** first-party HDF Group publications; license and redistribution rules

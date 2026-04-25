@@ -1,12 +1,15 @@
-# Quickstart: verify HDF5 2.2.0 org.hdfgroup artifacts (Windows x86_64)
+# Quickstart: verify HDF5 2.2.0 org.hdfgroup artifacts (per-platform classifiers)
 
 Prerequisites: **JDK 25** and Maven per repository baseline; artifacts available to your resolver
 (local install, mirror, or Maven Central).
 
 ## 1. Confirm platform
 
-This quickstart applies to **64-bit Windows** (x86_64) where the **`windows-x86_64`** classifier is
-used.
+**Reference path**: **64-bit Windows** (x86_64) using classifier **`windows-x86_64`** on
+`hdf5-java-ffm`. **Other OS/arch**: assume HDF Group publishes **correspondent classifiers** for the
+same **`org.hdfgroup:hdf5-java-ffm:2.2.0`** coordinates—use the classifier for **your** active Maven
+profile when running **R2**-style checks from
+[`contracts/developer-build-resolution.md`](./contracts/developer-build-resolution.md).
 
 ## 2. Pre-populate local Maven cache (pre–Maven Central only)
 
@@ -38,4 +41,5 @@ HDF4 paths, etc.) remain satisfied per existing project rules.
 mvn -q -DskipTests validate
 ```
 
-Expected: Linux jobs do not require the Windows-only **`hdf5-java-ffm`** classifier artifact.
+Expected: Linux jobs do not resolve **`hdf5-java-ffm`** classifiers for **inactive** foreign
+platforms (e.g. **`windows-x86_64`** when no Windows profile is active).

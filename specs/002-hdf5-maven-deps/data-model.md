@@ -27,28 +27,30 @@ No application database. Entities describe **Maven coordinates**, **platform sco
 | `groupId` | string | **`org.hdfgroup`** |
 | `artifactId` | string | **`hdf5-java-ffm`** |
 | `version` | semver string | **`2.2.0`** |
-| `classifier` | string | **`windows-x86_64`** |
+| `classifier` | string | **Per target platform** (example **`windows-x86_64`** for 64-bit Windows;
+  **correspondent** HDF Group classifiers for other OS/arch at **2.2.0**) |
 
 **Validation rules**
 
-- MUST match **FR-002** and **FR-003** (pinned version + fixed classifier for the Windows FFM line).
+- MUST match **FR-002** and **FR-003** (pinned version + **intended** platform classifier, no drift).
 
 **Relationships**
 
 - Provides **Java FFM** bindings intended for JDK 25+ code paths (consumption may be phased).
 
-## Entity: `WindowsX86_64MavenProfile`
+## Entity: `PlatformHdf5FfmMavenProfile`
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `profileId` | string | Stable id (e.g. `windows-x86_64-hdf5-ffm`) |
-| `activation` | struct | Maven `os` activation: Windows family + amd64/x86_64 arch |
-| `dependencies` | list | References to `Hdf5NativeArtifact` and `Hdf5JavaFfmArtifact` |
+| `profileId` | string | Stable id (e.g. `windows-x86_64-hdf5-ffm`; mirror pattern for other OS) |
+| `activation` | struct | Maven `os` / `arch` activation matching **one** platform classifier |
+| `hdf5JavaFfmClassifier` | string | e.g. **`windows-x86_64`**; other platforms use their **correspondent** strings |
+| `dependencies` | list | References to `Hdf5NativeArtifact` and `Hdf5JavaFfmArtifact` for that classifier |
 
 **Validation rules**
 
-- When profile is **inactive** (non-Windows CI), build MUST NOT require Central access to these
-  artifacts.
+- When a platform profile is **inactive**, the build MUST NOT resolve **foreign** `hdf5-java-ffm`
+  classifiers for other OS/arch on that runner.
 
 ## Entity: `ResolverVisibilityNote`
 
@@ -71,8 +73,8 @@ No application database. Entities describe **Maven coordinates**, **platform sco
 
 **Validation rules**
 
-- **FR-005**: Docs MUST clarify whether Windows devs still touch `hdf5.lib.dir` for JNI path while
-  FFM artifacts are present.
+- **FR-005**: Docs MUST clarify whether devs on each platform still touch `hdf5.lib.dir` for JNI path
+  while FFM artifacts are present for that platform’s profile.
 
 **Relationships**
 

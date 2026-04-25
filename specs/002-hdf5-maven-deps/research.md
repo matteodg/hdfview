@@ -1,14 +1,14 @@
-# Phase 0 — Research: HDF5 Maven native + Java FFM (2.2.0, Windows x86_64)
+# Phase 0 — Research: HDF5 Maven native + Java FFM (2.2.0, per-platform classifiers)
 
 ## 1. Where to declare `org.hdfgroup` artifacts
 
 **Decision**: Declare versions in **root** `pom.xml` as properties (e.g. `hdfgroup.hdf5.native.version`
 = **2.2.0**) and centralize GAV in **`dependencyManagement`**. Add concrete dependencies in
-**`object/pom.xml`** behind a **Windows x86_64** Maven profile so Linux CI does not resolve
-unavailable classifiers.
+**`object/pom.xml`** behind **OS-scoped Maven profiles** so each CI/runtime OS resolves only its own
+**`hdf5-java-ffm` classifier** (first concrete profile: **Windows x86_64** / `windows-x86_64`).
 
 **Rationale**: Matches existing BOM-style root (`hdfview-bom`) and keeps module POMs thin; profile
-activation matches **FR-005** (other OS unchanged).
+activation matches **FR-005** (no foreign classifier on inactive platforms).
 
 **Alternatives considered**:
 
@@ -35,13 +35,13 @@ native crash risk during the first merge.
 
 ---
 
-## 3. Getting native DLLs onto the runtime path (Windows)
+## 3. Getting native binaries onto the runtime path (per platform)
 
 **Decision**: Prefer **explicit unpack or copy** of payloads from **`hdf5-native`** into a
-build-controlled directory (e.g. under `object/target/` or `hdfview/target/`) that **Windows
-packaging** already consumes, **or** document that on Windows x86_64 developers set
-`hdf5.lib.dir` to the directory produced by that unpack step—**one** source of truth per
-environment, never two uncoordinated copies on `PATH`.
+build-controlled directory (e.g. under `object/target/` or `hdfview/target/`) that **platform
+packaging** already consumes, **or** document that developers set `hdf5.lib.dir` to the directory
+produced by that unpack step for that OS—**one** source of truth per environment, never two
+uncoordinated native copies on `PATH`.
 
 **Rationale**: Satisfies spec story about avoiding hand-copied vendor DLLs in-repo while respecting
 constitution II (no duplicate conflicting natives).
@@ -85,12 +85,14 @@ same GAV after Central goes live (**User Story 3**).
 
 ## 6. Classifier and arch naming
 
-**Decision**: Use the user-supplied classifier **`windows-x86_64`** on **`hdf5-java-ffm`** verbatim.
-Confirm **`hdf5-native`** artifact has **no classifier** (default JAR/POM type per HDF Group
-packaging); adjust POM `type` if the published artifact uses a **pom** packaging for native bundles.
+**Decision**: Use **`windows-x86_64`** on **`hdf5-java-ffm`** for 64-bit Windows as the **reference**
+classifier. **Assume HDF Group publishes correspondent classifiers** for other OS/arch targets at the
+same **`2.2.0`** version; add additional Maven profiles using the same pattern when those artifacts
+are available in the resolver. Confirm **`hdf5-native`** packaging (classifier/type) from the
+published POM; adjust POM `type` if HDF Group uses non-default packaging for native bundles.
 
-**Rationale**: Spec names exact coordinates; implementation must match published POMs—validate
-against the local `.m2` copy during `/speckit-implement`.
+**Rationale**: Keeps one artifact ID with **per-platform classifiers**—validate each tuple against
+the local `.m2` (or Central) layout during `/speckit-implement`.
 
 **Alternatives considered**:
 
