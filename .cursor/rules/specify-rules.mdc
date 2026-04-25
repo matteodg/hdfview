@@ -5,5 +5,5 @@ alwaysApply: true
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan at
-`specs/001-jdk-25-ffm/plan.md` (feature spec: `specs/001-jdk-25-ffm/spec.md`).
+`specs/002-hdf5-maven-deps/plan.md` (feature spec: `specs/002-hdf5-maven-deps/spec.md`).
 <!-- SPECKIT END -->
