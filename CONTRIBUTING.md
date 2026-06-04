@@ -19,7 +19,7 @@ HDFView is a Java-based GUI application for viewing and editing HDF files. The p
 
 ### Prerequisites
 
-- **Java 21** or later
+- **JDK 25** or later
 - **Maven 3.6+**
 - **HDF4 and HDF5 native libraries**
 - **Git**

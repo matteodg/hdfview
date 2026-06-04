@@ -15,8 +15,8 @@
 
   <properties>
     <!-- argLine not defined here - set by JaCoCo prepare-agent and/or CLI -->
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.release>25</maven.compiler.release>
     <!-- Use classpath instead of module path (module-info.java disabled) -->
     <maven.compiler.testCompilerArgument>-classpath</maven.compiler.testCompilerArgument>
     <slf4j.version>2.0.17</slf4j.version>
@@ -119,9 +119,9 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.14.0</version>
           <configuration>
-            <source>21</source>
-            <target>21</target>
-            <release>21</release>
+            <source>25</source>
+            <target>25</target>
+            <release>25</release>
             <!-- Force classpath mode instead of module path -->
             <forceLegacyJavacApi>true</forceLegacyJavacApi>
           </configuration>
@@ -295,8 +295,8 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.6.3</version>
           <configuration>
-            <source>21</source>
-            <target>21</target>
+            <source>25</source>
+            <target>25</target>
             <encoding>UTF-8</encoding>
             <docencoding>UTF-8</docencoding>
             <charset>UTF-8</charset>

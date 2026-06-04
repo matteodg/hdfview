@@ -1,6 +1,10 @@
+---
+baseline_commit: f44d06a9f86eaef1b6ff0058cd24c8a5ee6f3bd1
+---
+
 # Story 1.1: Set JDK 25 as Maven compiler baseline
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -19,20 +23,20 @@ so that we align the toolchain before any HDF5 FFM or CI changes.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Centralize Java 25 in root `pom.xml` properties (AC: #1)
-  - [ ] Set `maven.compiler.source` and `maven.compiler.release` to `25`
-  - [ ] Update `pluginManagement` `maven-compiler-plugin` `<source>`, `<target>`, `<release>` to `25`
-  - [ ] Update `maven-javadoc-plugin` `<source>` / `<target>` to `25` in pluginManagement
-- [ ] Task 2: Align module-level compiler overrides (AC: #2)
-  - [ ] `object/pom.xml` — `maven-compiler-plugin` configuration (lines ~121–123)
-  - [ ] `hdfview/pom.xml` — `maven-compiler-plugin` configuration (lines ~789–791)
-  - [ ] Confirm `repository/pom.xml` inherits from parent (no stale `21` override)
-- [ ] Task 3: Verify compile on JDK 25 (AC: #1, #2)
-  - [ ] Run `mvn clean package -DskipTests` from repo root with JDK 25 on PATH
-  - [ ] Confirm `repository` → `object` → `hdfview` build order succeeds
-- [ ] Task 4: Update minimum Java in `CLAUDE.md` (AC: #3)
-  - [ ] Replace Java 21 references in "Key Build Configuration" / Java Version bullets with JDK 25
-  - [ ] Optionally align `CONTRIBUTING.md` prerequisites (not required by AC but recommended)
+- [x] Task 1: Centralize Java 25 in root `pom.xml` properties (AC: #1)
+  - [x] Set `maven.compiler.source` and `maven.compiler.release` to `25`
+  - [x] Update `pluginManagement` `maven-compiler-plugin` `<source>`, `<target>`, `<release>` to `25`
+  - [x] Update `maven-javadoc-plugin` `<source>` / `<target>` to `25` in pluginManagement
+- [x] Task 2: Align module-level compiler overrides (AC: #2)
+  - [x] `object/pom.xml` — `maven-compiler-plugin` configuration (lines ~121–123)
+  - [x] `hdfview/pom.xml` — `maven-compiler-plugin` configuration (lines ~789–791)
+  - [x] Confirm `repository/pom.xml` inherits from parent (no stale `21` override)
+- [x] Task 3: Verify compile on JDK 25 (AC: #1, #2)
+  - [x] Run `mvn clean package -DskipTests` from repo root with JDK 25 on PATH
+  - [x] Confirm `repository` → `object` → `hdfview` build order succeeds
+- [x] Task 4: Update minimum Java in `CLAUDE.md` (AC: #3)
+  - [x] Replace Java 21 references in "Key Build Configuration" / Java Version bullets with JDK 25
+  - [x] Optionally align `CONTRIBUTING.md` prerequisites (not required by AC but recommended)
 
 ## Dev Notes
 
@@ -112,16 +116,35 @@ Recent commits (`57899e0d` … `37bb0946`) are BMAD planning artifacts only — 
 
 ## Story completion status
 
-Ultimate context engine analysis completed — comprehensive developer guide created. Status: **ready-for-dev**.
+Implementation complete — ready for code review.
 
 ## Dev Agent Record
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Composer (dev-story)
 
 ### Debug Log References
 
+- First `mvn clean package` failed: `HDFView.exe` locked under `hdfview/target/dist` (clean could not delete). Removed `hdfview/target/dist` and re-ran; build succeeded.
+- Ant copy warning: `HDF5\2.1.1\bin\plugin` path missing (pre-existing `build.properties` layout; non-blocking).
+
 ### Completion Notes List
 
+- Set `maven.compiler.source` / `maven.compiler.release` and compiler + javadoc plugin levels to **25** in root, `object`, and `hdfview` POMs.
+- Verified `repository/pom.xml` has no local Java 21 override (inherits parent).
+- `mvn clean package -DskipTests` succeeded on Windows x86_64 with **OpenJDK Temurin 25.0.3**.
+- Updated `CLAUDE.md` and `CONTRIBUTING.md` minimum Java to JDK 25.
+- No HDF5 binding, CI, or dependency changes (AC #4).
+
 ### File List
+
+- `pom.xml`
+- `object/pom.xml`
+- `hdfview/pom.xml`
+- `CLAUDE.md`
+- `CONTRIBUTING.md`
+
+## Change Log
+
+- 2026-06-04: Story 1.1 — JDK 25 Maven compiler baseline (POMs + docs); compile verified with `mvn clean package -DskipTests`.
