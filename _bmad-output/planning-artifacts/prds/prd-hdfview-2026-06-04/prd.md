@@ -30,7 +30,7 @@ This initiative moves the codebase in **two phases**: first **JDK 25** with no H
 - **When** CI or a new dev machine builds HDFView, **I want** JDK 25 and (after Phase 2) `org.hdfgroup` coordinates documented for Windows x86_64, **so** builds are reproducible.
 - **When** we ship a release, **I want** behavioral parity with pre-migration HDFView on Windows, **so** platform work does not surface as user regressions.
 - **When** I debug HDF5 native integration, **I want** FFM instead of JNI, **so** behavior aligns with upstream `javahdf5` / `hdf5-java-ffm` and is easier to maintain.
-- **When** I run GitHub Actions or local release builds, **I want** the same JDK and dependency rules as dev, **so** CI failures match what maintainers see locally. `[ASSUMPTION: Windows-focused CI updates are in scope for both phases.]`
+- **When** I run GitHub Actions or local release builds, **I want** the same JDK and dependency rules as dev, **so** CI failures match what maintainers see locally.
 
 ### 2.2 Non-Users (this initiative)
 
@@ -43,7 +43,7 @@ This initiative moves the codebase in **two phases**: first **JDK 25** with no H
 - **UJ-1. Alex validates Phase 1 (JDK 25) on Windows**
   - **Persona + context:** Alex, HDFView maintainer, Windows x86_64 dev machine; HDF4 still via `build.properties` JNI paths.
   - **Entry state:** Branch on Phase 1; JDK 25 installed; existing `jarhdf5` / `repository` flow unchanged.
-  - **Path:** Bump toolchain → `mvn package` → launch HDFView → open HDF5 + HDF4 samples → edit dataset/attribute → save → run object-module tests (`@Tag("unit")` / `fast` subset).
+  - **Path:** Bump toolchain → `mvn package` → jpackage smoke (JDK 25) → launch HDFView → manual smoke → run object tests + **mandatory** `@Tag("ui")` suite (FR-13).
   - **Climax:** No functional regression vs pre-migration; app launches without `java.library.path` breakage.
   - **Resolution:** Phase 1 mergeable; Phase 2 work can start.
   - **Edge case:** Launcher must tolerate `Program Files` paths (quoted JVM args).
@@ -51,7 +51,7 @@ This initiative moves the codebase in **two phases**: first **JDK 25** with no H
 - **UJ-2. Alex validates Phase 2 (HDF5 FFM) on Windows**
   - **Persona + context:** Same maintainer; `repository` module removed; `org.hdfgroup` 2.2.0 on classpath.
   - **Entry state:** Phase 1 complete; Windows `windows-x86_64` classifiers declared in POM.
-  - **Path:** Remove `repository` → add FFM dependencies → drop `jarhdf5` for HDF5 → rebuild → repeat UJ-1 smoke (HDF5 + HDF4).
+  - **Path:** Remove `repository` → add FFM dependencies → drop `jarhdf5` for HDF5 → rebuild → repeat UJ-1 smoke + **mandatory UI tests** on Windows.
   - **Climax:** HDF5 operations use FFM; HDF4 still JNI; build fails fast if classifier/native artifacts missing.
   - **Resolution:** Phase 2 mergeable for Windows x86_64; Linux/macOS follow-up tracked separately.
 
@@ -95,21 +95,21 @@ Maintainers can run `mvn test` for `object` and agreed `hdfview` subsets without
 
 #### FR-3: Launch and package on JDK 25
 
-Maintainers can start HDFView via project launchers (`run-hdfview.bat` / `.sh`) and produce the same JAR layout as today.
+Maintainers can start HDFView via project launchers (`run-hdfview.bat` / `.sh`), produce the same JAR layout as today, and build **jpackage** app-images/installers using a **JDK 25** runtime.
 
 **Consequences (testable):**
 - Direct JAR launch opens the main window on Windows x86_64.
 - `java.library.path` / `PATH` for HDF4 JNI remains configurable via `build.properties`.
+- `mvn verify -Pjpackage-app-image` (or documented equivalent) completes on Windows x86_64 with JDK 25 bundled/configured per jpackage profiles.
 
 #### FR-4: Behavioral parity (Phase 1)
 
 Maintainers can execute UJ-1 smoke: HDF5 and HDF4 sample files open, edit, save without new errors vs pre-Phase-1 baseline.
 
 **Consequences (testable):**
-- Object-module `@Tag("unit")` and `@Tag("fast")` tests pass on Windows CI or maintainer machine.
+- Object-module `@Tag("unit")` and `@Tag("fast")` tests pass on CI and maintainer machines.
+- **Mandatory:** `hdfview` `@Tag("ui")` tests pass for Phase 1 sign-off (maintainer machine with display; CI per FR-13).
 - No new user-facing dialogs or data corruption in smoke scenarios.
-
-**Notes:** `[NOTE FOR PM]` UI tests (`@Tag("ui")`) may remain optional in CI if no display; document what runs for Phase 1 sign-off.
 
 ---
 
@@ -135,15 +135,16 @@ Maintainers can build the project with **`repository` removed** from the root `p
 - Root `pom.xml` module order is `object` → `hdfview` (or equivalent without `repository`).
 - Documentation no longer instructs building `repository` first for HDF5.
 
-#### FR-7: HDF5 code paths use FFM bindings
+#### FR-7: HDF5 code paths use FFM bindings (big-bang)
 
-Maintainers can compile and run `object` / `hdfview` HDF5 operations through **`javahdf5` / `hdf5-java-ffm`** instead of `hdf.hdf5lib` / `jarhdf5`.
+Maintainers replace **`hdf.hdf5lib`** usage with **`javahdf5` / `hdf5-java-ffm`** in a **big-bang** cutover (no long-lived JNI adapter layer for HDF5).
 
 **Consequences (testable):**
-- No compile-time dependency on `jarhdf5` for HDF5.
+- No compile-time dependency on `jarhdf5` or `hdf.hdf5lib` for HDF5.
+- `object` and `hdfview` HDF5 call sites compile against `org.hdfgroup` 2.2.0 APIs only.
 - HDF5 read/write smoke in UJ-2 succeeds on Windows x86_64.
 
-**Out of Scope:** Rewriting HDF4 bindings; non-Windows classifiers.
+**Out of Scope:** Rewriting HDF4 bindings; non-Windows classifiers; incremental dual-stack JNI+FFM for HDF5.
 
 #### FR-8: HDF4 remains JNI
 
@@ -153,19 +154,22 @@ Maintainers can still open and edit HDF4 files using existing JNI + `build.prope
 - UJ-2 HDF4 smoke passes after Phase 2.
 - `hdf.lib.dir` (or successor) documented for HDF4-only natives.
 
-#### FR-9: Simplify HDF5 native configuration
+#### FR-9: Remove HDF5 paths from build configuration
 
-Maintainers are not required to set `hdf5.lib.dir` / `hdf5.plugin.dir` in `build.properties` for standard HDF5 FFM resolution via Maven classifiers. `[ASSUMPTION: HDF5 plugin loading is handled by org.hdfgroup native artifacts.]`
+Maintainers no longer set `hdf5.lib.dir` or `hdf5.plugin.dir` in `build.properties` (or template); HDF5 natives and plugins resolve via `org.hdfgroup` Maven artifacts only.
 
 **Consequences (testable):**
-- Fresh Windows dev setup can build without manual HDF5 2.1.1 installer paths for HDF5 (HDF4 paths may still be required).
+- `build.properties` template and docs omit `hdf5.lib.dir` / `hdf5.plugin.dir`.
+- Fresh Windows dev setup builds and runs HDF5 without a system HDF5 installer path for HDF5 (HDF4 `hdf.lib.dir` may still be required).
+- Maven enforcer / copy steps that referenced `hdf5.lib.dir` are removed or gated to HDF4-only.
 
 #### FR-10: Behavioral parity (Phase 2)
 
-Maintainers can sign off Phase 2 when UJ-2 smoke and object-module HDF5 tests match Phase 1 behavior for the same sample files.
+Maintainers can sign off Phase 2 when UJ-2 smoke, object-module HDF5 tests, and **mandatory UI tests** match Phase 1 behavior for the same sample files.
 
 **Consequences (testable):**
 - No new crashes on common datatypes (including compound, vlen, refs; Float16/BFLOAT16 per existing test coverage).
+- **Mandatory:** full `@Tag("ui")` suite (or agreed Phase 2 subset documented in stories) passes on Windows x86_64 before merge.
 - Regression list documented in epic/story acceptance criteria.
 
 **Feature-specific NFRs:**
@@ -186,13 +190,23 @@ Maintainers can follow updated build/run instructions per phase in `CLAUDE.md`, 
 - Phase 1 docs reference JDK 25 only.
 - Phase 2 docs reference `org.hdfgroup` coordinates and removal of `repository`.
 
-#### FR-12: Windows CI signal
+#### FR-12: GitHub Actions alignment (all platforms)
 
-Maintainers get at least one CI workflow (or documented manual gate) that validates the current phase on **windows-x86_64**. `[ASSUMPTION: Existing GitHub Actions Windows jobs are updated, not replaced.]`
+Maintainers update **Windows, macOS, and Linux** GitHub Actions workflows to **JDK 25** in Phase 1 (existing jobs updated, not replaced). Phase 2 adds **Windows x86_64 FFM** validation; non-Windows jobs stay on JDK 25 with a documented test scope until Linux/macOS FFM classifiers exist.
 
 **Consequences (testable):**
-- Phase 1: Windows job uses JDK 25 and passes compile + object tests.
-- Phase 2: Windows job uses FFM dependencies and passes agreed test subset.
+- **Phase 1:** Windows, macOS, and Linux CI jobs use **JDK 25** and pass compile + object-module tests (+ UI tests per FR-13 where runners support display).
+- **Phase 2:** **Windows** CI uses **`org.hdfgroup` 2.2.0** FFM dependencies (no `repository` / `jarhdf5` bootstrap) and passes object + **mandatory UI** tests.
+- **Phase 2:** macOS/Linux CI remain on JDK 25; jobs either pass with documented exclusions for Windows-only FFM artifacts or are explicitly scoped in stories (no silent green builds that skip HDF5).
+
+#### FR-13: Mandatory UI tests (both phases)
+
+Maintainers treat **`@Tag("ui")`** SWTBot tests as a **required** gate for phase completion, not optional smoke.
+
+**Consequences (testable):**
+- Phase 1 and Phase 2 definition-of-done lists include UI test execution and results.
+- CI or maintainer runbook documents how UI tests run per OS (e.g. display on Windows maintainer box; headless/display service on Linux CI if used).
+- Failed UI tests block phase merge same as unit test failures.
 
 ## 5. Non-Goals (Explicit)
 
@@ -210,15 +224,16 @@ Scope is **two phased MVPs**, not a single cutover.
 ### 6.1 In Scope
 
 **Phase 1 (must ship before Phase 2 starts)**
-- JDK 25 in POMs, launchers, and maintainer docs
-- Parity per FR-4 / UJ-1 on Windows x86_64
+- JDK 25 in POMs, launchers, **jpackage**, and maintainer docs
+- CI (Windows, macOS, Linux) on JDK 25 per FR-12
+- Parity per FR-4 / FR-13 / UJ-1
 - JNI/`jarhdf5`/`repository` unchanged
 
 **Phase 2 (depends on Phase 1)**
 - `org.hdfgroup` 2.2.0 FFM stack, Windows x86_64 only
 - Remove `repository` module and HDF5 JNI (`jarhdf5`)
 - HDF4 JNI retained
-- Parity per FR-10 / UJ-2
+- Parity per FR-10 / FR-13 / UJ-2 (mandatory UI tests on Windows)
 
 ### 6.2 Out of Scope for MVP
 
@@ -227,17 +242,19 @@ Scope is **two phased MVPs**, not a single cutover.
 | Linux/macOS FFM classifiers | Deferred; Windows-first |
 | HDF4 FFM | Separate future initiative |
 | User-facing release notes beyond “maintenance” | No user-visible change goal |
-| Full UI test suite in CI | Display-dependent; object tests gate parity |
+| Linux/macOS FFM in Phase 2 CI | Windows-only FFM artifacts; non-Windows CI scoped per FR-12 |
 
 ## 7. Success Metrics
 
 **Primary**
-- **SM-1:** Phase 1 complete — 100% of FR-1–FR-4 consequences met on Windows x86_64. Validates FR-1–FR-4.
+- **SM-1:** Phase 1 complete — FR-1–FR-4, FR-12 (all OS JDK 25), FR-13 consequences met. Validates FR-1–FR-4, FR-12, FR-13.
 - **SM-2:** Phase 2 complete — 100% of FR-5–FR-10 consequences met on Windows x86_64. Validates FR-5–FR-10.
 
 **Secondary**
 - **SM-3:** Zero P1/P2 user-reported regressions attributable to migration in the first 30 days post-Phase-2 merge (or “no reports” if not shipped to external users). Validates FR-4, FR-10.
 - **SM-4:** New Windows dev onboarding no longer documents `repository` or manual `jarhdf5` install after Phase 2. Validates FR-6, FR-9.
+- **SM-5:** Phase 1 jpackage app-image build succeeds on JDK 25. Validates FR-3.
+- **SM-6:** Mandatory UI test suite green for phase sign-off. Validates FR-13, FR-4, FR-10.
 
 **Counter-metrics (do not optimize)**
 - **SM-C1:** Lines of code changed — prefer minimal diffs; do not expand scope for refactor credit.
@@ -245,15 +262,9 @@ Scope is **two phased MVPs**, not a single cutover.
 
 ## 8. Open Questions
 
-1. Which **hdfview** UI tests (if any) are mandatory for Phase 1 vs Phase 2 sign-off on maintainer machines?
-2. Does **jpackage** bundled runtime move to JDK 25 in Phase 1, and is installer smoke in scope?
-3. What is the **API migration** plan from `hdf.hdf5lib` call sites to `javahdf5` — big-bang vs adapter layer in `object`?
-4. Are **GitHub Actions** macOS/Linux jobs pinned to 21 until a follow-up epic, or bumped to 25 in Phase 1?
-5. After Phase 2, is **`hdf5.lib.dir`** removed from `build.properties` template entirely or kept optional for debugging?
+_None — resolved in `.decision-log.md`. Architecture/epics should detail: exact UI test list per phase, Linux CI display strategy for SWTBot, and macOS/Linux job behavior after Phase 2 FFM (Windows-only artifacts)._
 
 ## 9. Assumptions Index
 
-- `[ASSUMPTION: Windows-focused CI updates are in scope for both phases.]` — §2.1
-- `[ASSUMPTION: HDF5 plugin loading is handled by org.hdfgroup native artifacts.]` — FR-9
-- `[ASSUMPTION: Existing GitHub Actions Windows jobs are updated, not replaced.]` — FR-12
-- `[ASSUMPTION: org.hdfgroup 2.2.0 APIs support all HDF5 code paths HDFView uses today.]` — implicit in FR-7; confirm during architecture
+- `[ASSUMPTION: org.hdfgroup 2.2.0 APIs support all HDF5 code paths HDFView uses today.]` — confirm during architecture / Phase 2 spike
+- `[ASSUMPTION: Phase 2 macOS/Linux CI can be kept meaningful without Windows FFM classifiers (scoped tests or temporary job config).]` — confirm in architecture / CI stories

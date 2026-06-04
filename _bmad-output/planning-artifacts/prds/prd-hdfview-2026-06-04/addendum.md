@@ -38,7 +38,11 @@ User-supplied dependencies already in local Maven repository. Classifier example
 
 **Replaces (Phase 2):** legacy `jarhdf5` JNI artifact, `repository/` module, and manual `build.properties` HDF5 native path wiring.
 
-**Unchanged in Phase 2:** HDF4 continues to use JNI; `build.properties` (or equivalent) still required for HDF4 native paths on Windows x86_64.
+**Unchanged in Phase 2:** HDF4 continues to use JNI; `build.properties` still required for **HDF4 only** (`hdf.lib.dir`).
+
+**Removed in Phase 2:** `hdf5.lib.dir`, `hdf5.plugin.dir` — HDF5 via Maven classifiers only.
+
+**Phase 2 API strategy:** Big-bang replacement of `hdf.hdf5lib` with `javahdf5` / `hdf5-java-ffm` (no dual-stack adapter).
 
 **Platform scope (Phase 2):** Windows x86_64 only for org.hdfgroup classified artifacts; Linux/macOS classifiers deferred.
 
