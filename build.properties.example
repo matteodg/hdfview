@@ -1,6 +1,7 @@
 # =============================================================================
 # HDFView Build Configuration Template
-# Copy this file to build.properties and customize for your environment
+# Copy this file to build.properties and customize for your environment.
+# build.properties is git-ignored: keep machine-specific absolute paths local.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -8,29 +9,31 @@
 # -----------------------------------------------------------------------------
 
 # Absolute path to HDF5 lib directory (REQUIRED)
-# Windows: provide path to bin with forward slashes, e.g. C:/path/to/hdf5/bin
-# Linux/Mac: provide path to lib, e.g. /path/to/hdf5/lib
-hdf5.lib.dir=C:\\Program Files\\HDF_Group\\HDF5\\2.1.1\\bin
+# Windows: path to bin with forward slashes, e.g. C:/path/to/hdf5/bin
+# Linux/Mac: path to lib, e.g. /path/to/hdf5/lib
+hdf5.lib.dir=/path/to/hdf5/lib
 
 # HDF5 plugin directory (OPTIONAL)
-hdf5.plugin.dir=C:\\Program Files\\HDF_Group\\HDF5\\2.1.1\\lib\\plugin
+hdf5.plugin.dir=/path/to/hdf5/lib/plugin
 
 # Absolute path to HDF4 lib directory (OPTIONAL, required for HDF4 support)
-# Windows: provide path to bin with forward slashes, e.g. C:/path/to/hdf4/bin
-# Linux/Mac: provide path to lib, e.g. /path/to/hdf4/lib
-hdf.lib.dir=C:\\Program Files\\HDF_Group\\HDF\\4.3.1\\bin
+# Windows: path to bin with forward slashes, e.g. C:/path/to/hdf4/bin
+# Linux/Mac: path to lib, e.g. /path/to/hdf4/lib
+hdf.lib.dir=/path/to/hdf4/lib
 
 # -----------------------------------------------------------------------------
 # Platform-Specific Runtime Configuration
 # -----------------------------------------------------------------------------
 # Platform library path for native libraries (used for java.library.path)
-# Linux/macOS: Use /lib directory (shared libraries) - colon-separated for multiple paths
-# Windows: Use /bin directory (DLLs) - semicolon-separated for multiple paths
+# Linux/macOS: /lib directories, colon-separated for multiple paths
+# Windows: /bin directories, semicolon-separated for multiple paths
 # Examples:
 #   Linux:   platform.hdf.lib=/path/to/hdf5/lib:/path/to/hdf4/lib
 #   Windows: platform.hdf.lib=C:/path/to/hdf5/bin;C:/path/to/hdf4/bin
-# NOTE: Environment variable placeholders like ${env.LD_LIBRARY_PATH} do NOT work - use actual paths
-platform.hdf.lib=C:/Program Files/HDF_Group/HDF5/2.1.1/bin;C:/Program Files/HDF_Group/HDF/4.3.1/bin
+# NOTE: Environment variable placeholders like ${env.LD_LIBRARY_PATH} do NOT work - use actual paths.
+# NOTE: paths with spaces (e.g. C:/Program Files/...) are handled by the quoted
+#       -Djava.library.path in the Surefire argLine; provide the real path here.
+platform.hdf.lib=
 
 # -----------------------------------------------------------------------------
 # Build Configuration

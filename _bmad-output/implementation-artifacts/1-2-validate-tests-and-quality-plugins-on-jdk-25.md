@@ -4,7 +4,7 @@ baseline_commit: 9e1ff17bd877012af4f605846e58cdcbcae15b02
 
 # Story 1.2: Validate tests and quality plugins on JDK 25
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -42,6 +42,18 @@ so that CI and local development use the same JVM rules after the compiler basel
   - [x] Fixed stale "Java 21" comments in PMD/Checkstyle/SpotBugs blocks; SpotBugs class-file major corrected to 69 (Java 25)
   - [x] Cleaned 3 stale PMD ruleset excludes surfaced by the 7.17 bump (`DataflowAnomalyAnalysis`, `ExcessiveClassLength` removed; `JUnitTestsShouldIncludeAssert` → `UnitTestShouldIncludeAssert`)
   - [x] Re-asserted PMD/Checkstyle "JDK 25 compatible" in CLAUDE.md (Story 1.1 had softened it pending this validation)
+
+### Review Findings
+
+- [x] [Review][Patch] `build.properties` untracked via `git rm --cached` (local copy kept); added sanitized `build.properties.example` template — machine paths no longer committed [build.properties, build.properties.example]
+- [x] [Review][Patch] AC #4 comment hygiene completed — remaining "Java 21" comments updated to JDK 25 [pom.xml:357,547,559,568,590; checkstyle-rules.xml:9]
+- [x] [Review][Patch] Story Completion Notes AC numbering corrected (AC #4 = comment hygiene, AC #5 = scope guardrails)
+- [x] [Review][Defer] `hdfview/pom.xml` Surefire argLine still unquoted (same space-crash) [hdfview/pom.xml:837] — deferred to Story 1.6 (already in deferred-work.md)
+- [x] [Review][Defer] object Surefire `<argLine>` overrides JaCoCo agent → no object coverage [object/pom.xml:188-195] — documented follow-up in deferred-work.md
+- [x] [Review][Defer] Quoted `-Djava.library.path` not validated on Linux/macOS CI JDK 25 [object/pom.xml:194] — Story 1.5
+- [x] [Review][Defer] CI workflows pin JDK 21 vs `--release 25`; maven-quality.yml has unquoted `-DargLine` [.github/workflows/*] — Story 1.5
+- [x] [Review][Defer] `platform.hdf.lib` not enforcer-validated (empty → native test failures) [pom.xml:481-484] — pre-existing env contract; follow-up
+- [x] [Review][Defer] No checked-in `build.properties` template for fresh clones [.gitignore:18] — Story 1.7 / separate
 
 ## Dev Notes
 
@@ -141,7 +153,8 @@ Composer (dev-story)
 - **AC #1 PASS:** `mvn test -pl object` → 163/163 pass on Temurin 25.0.3 with documented Surefire `--add-opens` + `--enable-native-access=jarhdf5`.
 - **AC #2 PASS:** PMD + Checkstyle pass (warnings only, non-failing); JaCoCo runs without JDK-25 error with a **documented skip + follow-up** (no thresholds lowered).
 - **AC #3 PASS:** PMD `targetJdk` aligned to 25; required pmd-core/pmd-java bump 7.7.0 → 7.17.0.
-- **AC #4 PASS:** No HDF5 binding, `org.hdfgroup`, CI, launcher, or jpackage changes.
+- **AC #4 PASS:** Comment hygiene applied across PMD/Checkstyle/SpotBugs blocks and `pmd-rules.xml`/`checkstyle-rules.xml` (Java 21 → JDK 25; class-file major 68 → 69).
+- **AC #5 PASS:** No HDF5 binding, `org.hdfgroup`, CI, launcher, or jpackage changes (scope guardrails).
 - **Two pre-existing fixes were required to run the tests at all:** (1) populate local `build.properties` `platform.hdf.lib`; (2) quote `-Djava.library.path` in the object Surefire argLine. Both are unrelated to JDK 25 but blocked AC #1.
 
 #### Follow-ups created (not in this story)

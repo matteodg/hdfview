@@ -1,5 +1,12 @@
 # Deferred Work
 
+## Deferred from: code review of 1-2-validate-tests-and-quality-plugins-on-jdk-25 (2026-06-04)
+
+- Quoted `-Djava.library.path` in object Surefire argLine validated on Windows only; verify on Linux/macOS once CI moves to JDK 25. → Story 1.5.
+- `maven-quality.yml` uses an unquoted CLI `-Djava.library.path=${HDF5LIB_PATH}/lib`; latent space-handling parallel to the Surefire fix. → Story 1.5.
+- `platform.hdf.lib` is not validated by the maven-enforcer rules (only `hdf5.lib.dir` is); an empty value silently breaks native test loading. Consider an enforcer rule. → follow-up.
+- No tracked `build.properties` template (e.g. `build.properties.example`) for fresh clones since the real file is gitignored. → Story 1.7 / docs.
+
 ## Deferred from: dev of 1-2-validate-tests-and-quality-plugins-on-jdk-25 (2026-06-04)
 
 - **JaCoCo object-module coverage not collected:** the `object` Surefire `<argLine>` is set literally and overrides JaCoCo's agent `argLine`, so no `.exec`/report is produced. Fix needs `@{argLine}` wiring + JaCoCo bump ≥0.8.13 (0.8.12 predates JDK 25 class-file major 69), and may surface a 60%/50% threshold failure — warrants a dedicated story. Do NOT lower thresholds.

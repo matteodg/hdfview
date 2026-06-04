@@ -354,7 +354,7 @@
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.6.4</version>
           <dependencies>
-            <!-- Update SpotBugs core - Java 21 has limited support -->
+            <!-- Update SpotBugs core - JDK 25 has limited support -->
             <dependency>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs</artifactId>
@@ -544,7 +544,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
             <includeTests>false</includeTests>
             <onlyAnalyze>hdf.*,ncsa.*</onlyAnalyze>
           </configuration>
-          <!-- Executions commented out due to Java 21 incompatibility - uncomment when SpotBugs supports Java 21
+          <!-- Executions commented out due to JDK 25 incompatibility - uncomment when SpotBugs supports JDK 25
           <executions>
             <execution>
               <id>spotbugs-analysis</id>
@@ -556,7 +556,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </executions>
           -->
           <dependencies>
-            <!-- Update SpotBugs core to latest version for Java 21 support -->
+            <!-- Update SpotBugs core to latest version for JDK 25 support -->
             <dependency>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs</artifactId>
@@ -565,7 +565,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </dependencies>
         </plugin>
 
-        <!-- PMD Static Analysis - Java 21 Compatible -->
+        <!-- PMD Static Analysis - JDK 25 Compatible -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
@@ -587,7 +587,7 @@ Otherwise, ensure HDF4 libraries are installed or set HDF4_HOME environment vari
           </executions>
         </plugin>
 
-        <!-- Checkstyle Code Style Enforcement - Java 21 Compatible -->
+        <!-- Checkstyle Code Style Enforcement - JDK 25 Compatible -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>

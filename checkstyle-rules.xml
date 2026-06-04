@@ -6,7 +6,7 @@
 <!--
     HDFView Checkstyle Configuration
     Based on Google Java Style with HDFView-specific adaptations
-    Compatible with Checkstyle 10.12.5+ (Java 21 support)
+    Compatible with Checkstyle 10.12.5+ (JDK 25 support)
 -->
 
 <module name="Checker">
