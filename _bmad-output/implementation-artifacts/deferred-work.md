@@ -1,5 +1,10 @@
 # Deferred Work
 
+## Deferred from: dev of 1-2-validate-tests-and-quality-plugins-on-jdk-25 (2026-06-04)
+
+- **JaCoCo object-module coverage not collected:** the `object` Surefire `<argLine>` is set literally and overrides JaCoCo's agent `argLine`, so no `.exec`/report is produced. Fix needs `@{argLine}` wiring + JaCoCo bump ≥0.8.13 (0.8.12 predates JDK 25 class-file major 69), and may surface a 60%/50% threshold failure — warrants a dedicated story. Do NOT lower thresholds.
+- **`hdfview/pom.xml` Surefire argLine** has the same unquoted `-Djava.library.path=${platform.hdf.lib}` that crashes the forked VM when the path contains spaces. Apply the same quoting fix during Story 1.6 (UI tests).
+
 ## Deferred from: code review of 1-1-set-jdk-25-as-maven-compiler-baseline (2026-06-04)
 
 - CI workflows still pin `java-version: '21'` across 9 `.github/workflows/*.yml` files; JDK 21 cannot compile `--release 25`, so CI will fail after merge until bumped. → Story 1.5.

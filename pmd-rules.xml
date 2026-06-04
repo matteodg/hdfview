@@ -4,14 +4,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>PMD rules customized for HDFView project with Java 21 support</description>
+    <description>PMD rules customized for HDFView project with JDK 25 support</description>
 
     <!-- Include standard rulesets with HDFView-specific exclusions -->
 
     <!-- Best Practices -->
     <rule ref="category/java/bestpractices.xml">
         <!-- Exclude rules that don't apply well to UI/SWT code -->
-        <exclude name="JUnitTestsShouldIncludeAssert"/>
+        <exclude name="UnitTestShouldIncludeAssert"/> <!-- PMD 7 rename of JUnitTestsShouldIncludeAssert -->
         <exclude name="UseVarargs"/> <!-- SWT methods don't use varargs -->
         <exclude name="AvoidReassigningParameters"/> <!-- Common in SWT event handlers -->
         <exclude name="GuardLogStatement"/> <!-- Acceptable for HDFView logging -->
@@ -37,7 +37,7 @@
         <exclude name="LawOfDemeter"/> <!-- UI event handling often violates this -->
         <exclude name="ExcessiveImports"/> <!-- UI classes often need many imports -->
         <exclude name="GodClass"/> <!-- Some UI classes are necessarily large -->
-        <exclude name="ExcessiveClassLength"/> <!-- UI classes can be long -->
+        <!-- ExcessiveClassLength exclude removed: rule replaced by NcssCount in PMD 7.x -->
         <exclude name="TooManyFields"/> <!-- UI classes often have many components -->
     </rule>
 
@@ -53,7 +53,7 @@
     <!-- Error Prone -->
     <rule ref="category/java/errorprone.xml">
         <!-- Customize for HDF-specific patterns -->
-        <exclude name="DataflowAnomalyAnalysis"/> <!-- Too many false positives -->
+        <!-- DataflowAnomalyAnalysis exclude removed: rule no longer exists in PMD 7.x -->
         <exclude name="NullAssignment"/> <!-- Sometimes necessary for cleanup -->
         <exclude name="AvoidFieldNameMatchingMethodName"/> <!-- Common in data classes -->
     </rule>

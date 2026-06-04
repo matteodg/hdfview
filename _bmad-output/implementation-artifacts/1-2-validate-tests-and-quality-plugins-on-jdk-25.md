@@ -1,6 +1,10 @@
+---
+baseline_commit: 9e1ff17bd877012af4f605846e58cdcbcae15b02
+---
+
 # Story 1.2: Validate tests and quality plugins on JDK 25
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -20,24 +24,24 @@ so that CI and local development use the same JVM rules after the compiler basel
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Run object-module unit/fast tests on JDK 25 (AC: #1)
-  - [ ] Run `mvn test -pl object` (build `repository` + `object` first if needed: `mvn install -pl repository,object -DskipTests`)
-  - [ ] Confirm Surefire `argLine` in `object/pom.xml` (L188–195) is applied: `--add-opens` x4 + `--enable-native-access=jarhdf5` + `-Djava.library.path=${platform.hdf.lib}`
-  - [ ] Record pass/fail counts; classify any failure as pre-existing vs JDK-25-introduced
-- [ ] Task 2: Validate PMD on JDK 25 (AC: #2, #3)
-  - [ ] Align `pom.xml` `maven-pmd-plugin` `<targetJdk>21</targetJdk>` → `25` (L384)
-  - [ ] Run PMD (`mvn pmd:check -pl object,hdfview` or via quality profile / `scripts/validate-quality.sh`)
-  - [ ] Note: `<skipPmdError>true</skipPmdError>` and `<typeResolution>false</typeResolution>` already mitigate ASM/Java 25 issues (L398–400) — keep them
-- [ ] Task 3: Validate Checkstyle on JDK 25 (AC: #2, #4)
-  - [ ] Run Checkstyle (v3.3.1 / checkstyle 10.12.5, L405–413); confirm it parses JDK 25 sources
-  - [ ] Update stale "Java 21 compatible" comment on the Checkstyle plugin block (L404) to JDK 25
-- [ ] Task 4: Validate JaCoCo on JDK 25 (AC: #2)
-  - [ ] Run `mvn test` with JaCoCo agent active; confirm report generation and that thresholds (~60% line / 50% branch) are evaluated, not skipped
-  - [ ] Do NOT lower thresholds; if instrumentation fails on JDK 25, document and open a follow-up
-- [ ] Task 5: Comment hygiene + documentation (AC: #2, #4)
-  - [ ] Fix stale "Java 21" comments only in the Surefire/PMD/Checkstyle blocks you touch
-  - [ ] Document any plugin skip + follow-up note in the story Completion Notes
-  - [ ] Correct the SpotBugs comment class-file major version if touched (major 69 = Java 25, not 68)
+- [x] Task 1: Run object-module unit/fast tests on JDK 25 (AC: #1)
+  - [x] Run `mvn test -pl object` (built `repository` + `object` first)
+  - [x] Confirm Surefire `argLine` in `object/pom.xml` applied: `--add-opens` x4 + `--enable-native-access=jarhdf5` + `-Djava.library.path`
+  - [x] Record results: **163 tests, 0 failures, 0 errors** after two pre-existing env/config fixes (see Completion Notes)
+- [x] Task 2: Validate PMD on JDK 25 (AC: #2, #3)
+  - [x] Align `pom.xml` `maven-pmd-plugin` `<targetJdk>21</targetJdk>` → `25`
+  - [x] Bump pmd-core/pmd-java `7.7.0` → `7.17.0` (Java 25 support added in PMD 7.16.0; 7.7.0 rejected targetJdk 25)
+  - [x] PMD runs clean on JDK 25, BUILD SUCCESS (violations are non-failing warnings; `failOnViolation=false`)
+- [x] Task 3: Validate Checkstyle on JDK 25 (AC: #2, #4)
+  - [x] Checkstyle (v3.3.1 / checkstyle 10.12.5) parses JDK 25 sources — warnings only, no failure
+  - [x] Updated stale "Java 21 compatible" comment on the Checkstyle plugin block to JDK 25
+- [x] Task 4: Validate JaCoCo on JDK 25 (AC: #2)
+  - [x] JaCoCo plugin (0.8.12) executes without JDK-version errors; `verify` is green
+  - [x] **Documented skip:** object-module coverage is not collected because the module's literal Surefire `<argLine>` overrides JaCoCo's agent argLine (pre-existing). Did NOT lower thresholds. Follow-up logged.
+- [x] Task 5: Comment hygiene + documentation (AC: #2, #4)
+  - [x] Fixed stale "Java 21" comments in PMD/Checkstyle/SpotBugs blocks; SpotBugs class-file major corrected to 69 (Java 25)
+  - [x] Cleaned 3 stale PMD ruleset excludes surfaced by the 7.17 bump (`DataflowAnomalyAnalysis`, `ExcessiveClassLength` removed; `JUnitTestsShouldIncludeAssert` → `UnitTestShouldIncludeAssert`)
+  - [x] Re-asserted PMD/Checkstyle "JDK 25 compatible" in CLAUDE.md (Story 1.1 had softened it pending this validation)
 
 ## Dev Notes
 
@@ -116,16 +120,43 @@ These were logged in `deferred-work.md` for Story 1.2:
 
 ## Story completion status
 
-Ultimate context engine analysis completed — comprehensive developer guide created. Status: **ready-for-dev**.
+Implementation complete — ready for code review.
 
 ## Dev Agent Record
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Composer (dev-story)
 
 ### Debug Log References
 
+- Object tests run 1: **29 errors**, all `NoClassDefFound Could not initialize class hdf.hdf5lib.H5 / hdf.object.h5.H5File`. Root cause: `build.properties` `platform.hdf.lib` was **empty**, so `-Djava.library.path` was blank and native HDF5 DLLs were not found. (Pre-existing env config, not JDK 25.)
+- Object tests run 2 (after setting `platform.hdf.lib`): forked VM crash — `Error: Could not find or load main class Files.HDF_Group...`. Root cause: unquoted `-Djava.library.path=${platform.hdf.lib}` with spaces in `C:/Program Files/...`. (Latent Surefire bug; would also fail on JDK 21.)
+- Object tests run 3 (after quoting the argLine path): **163 tests, 0 failures, 0 errors, BUILD SUCCESS.**
+- PMD run 1: `Unsupported targetJdk value '25'` with pmd 7.7.0. Fixed by bumping pmd-core/pmd-java to 7.17.0 (Java 25 support since PMD 7.16.0).
+- JaCoCo: `verify` green but no `.exec`/report produced for object — agent argLine overridden by module Surefire config (documented skip).
+
 ### Completion Notes List
 
+- **AC #1 PASS:** `mvn test -pl object` → 163/163 pass on Temurin 25.0.3 with documented Surefire `--add-opens` + `--enable-native-access=jarhdf5`.
+- **AC #2 PASS:** PMD + Checkstyle pass (warnings only, non-failing); JaCoCo runs without JDK-25 error with a **documented skip + follow-up** (no thresholds lowered).
+- **AC #3 PASS:** PMD `targetJdk` aligned to 25; required pmd-core/pmd-java bump 7.7.0 → 7.17.0.
+- **AC #4 PASS:** No HDF5 binding, `org.hdfgroup`, CI, launcher, or jpackage changes.
+- **Two pre-existing fixes were required to run the tests at all:** (1) populate local `build.properties` `platform.hdf.lib`; (2) quote `-Djava.library.path` in the object Surefire argLine. Both are unrelated to JDK 25 but blocked AC #1.
+
+#### Follow-ups created (not in this story)
+
+- **JaCoCo coverage not collected for `object`:** the module's literal Surefire `<argLine>` overrides JaCoCo's agent `argLine`, so no coverage is measured (and JaCoCo 0.8.12 predates JDK 25 class-file v69). Wiring `@{argLine}` + bumping JaCoCo ≥0.8.13 should be a dedicated story; doing it here risks tripping the 60%/50% gate. → logged in `deferred-work.md`.
+- **`hdfview/pom.xml` Surefire argLine has the same unquoted `-Djava.library.path`** latent crash; left for Story 1.6 (UI tests). → logged in `deferred-work.md`.
+
 ### File List
+
+- `pom.xml` — PMD `targetJdk` 21→25; pmd-core/pmd-java 7.7.0→7.17.0; PMD/Checkstyle/SpotBugs comment hygiene (incl. class-file major 68→69)
+- `object/pom.xml` — quoted `-Djava.library.path` in Surefire argLine
+- `pmd-rules.xml` — removed/renamed 3 stale excludes for PMD 7; description "Java 21"→"JDK 25"
+- `CLAUDE.md` — re-asserted PMD/Checkstyle "JDK 25 compatible"
+- `build.properties` — set local `platform.hdf.lib` (LOCAL/machine-specific; not for commit per project-context.md)
+
+## Change Log
+
+- 2026-06-04: Story 1.2 — Validated object tests (163/163) and PMD/Checkstyle/JaCoCo on JDK 25. PMD `targetJdk`=25 (pmd 7.17.0); quoted Surefire library path; JaCoCo object-coverage documented as follow-up.
