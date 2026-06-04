@@ -4,7 +4,7 @@ baseline_commit: f44d06a9f86eaef1b6ff0058cd24c8a5ee6f3bd1
 
 # Story 1.1: Set JDK 25 as Maven compiler baseline
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -37,6 +37,20 @@ so that we align the toolchain before any HDF5 FFM or CI changes.
 - [x] Task 4: Update minimum Java in `CLAUDE.md` (AC: #3)
   - [x] Replace Java 21 references in "Key Build Configuration" / Java Version bullets with JDK 25
   - [x] Optionally align `CONTRIBUTING.md` prerequisites (not required by AC but recommended)
+
+### Review Findings
+
+- [x] [Review][Patch] CLAUDE.md no longer overclaims PMD/Checkstyle "JDK 25 compatible" — softened to neutral wording; `targetJdk` alignment remains deferred to Story 1.2 [CLAUDE.md:152-153]
+- [x] [Review][Patch] CLAUDE.md now states "JDK 25 minimum" per AC #3/FR-1 [CLAUDE.md:137]
+- [x] [Review][Defer] CI workflows still pin `java-version: '21'` (9 workflow files) [.github/workflows/*.yml] — deferred to Story 1.5
+- [x] [Review][Defer] PMD `<targetJdk>21</targetJdk>` not bumped [pom.xml:384] — deferred to Story 1.2
+- [x] [Review][Defer] maven-javadoc-plugin source/target 25 not exercised by `package` [pom.xml:296-299] — deferred to Story 1.2
+- [x] [Review][Defer] Surefire/CI `--enable-native-access`/`--add-opens` argLine vs JDK mismatch [object/pom.xml, hdfview/pom.xml] — deferred to Story 1.2
+- [x] [Review][Defer] Launchers enforce Java ≥21, not ≥25 [run-hdfview.sh:98-101, run-hdfview.bat:80-91] — deferred to Story 1.3
+- [x] [Review][Defer] Docs still list Java 21 [docs/Testing-Guide.md:22, docs/guides/Cross-Platform-Build-Quick-Reference.md:6] — deferred to Story 1.7
+- [x] [Review][Defer] project-context.md still says Java 21 [_bmad-output/project-context.md:28,87] — deferred to Story 1.7
+- [x] [Review][Defer] Quality ruleset metadata says "Java 21" [pmd-rules.xml:7, checkstyle-rules.xml:9] — deferred to Story 1.2
+- [x] [Review][Defer] Stale SpotBugs/quality comments in root POM ("Java 21", class-file major 68 wrong for 25) [pom.xml:357,366,404,524-530,568,590,742] — deferred to Story 1.2
 
 ## Dev Notes
 

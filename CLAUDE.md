@@ -134,7 +134,7 @@ mvn test -pl hdfview -Dtest=TestClassName
 
 ### Key Build Configuration
 
-- **Java Version**: JDK 25 (set via `maven.compiler.source` and `maven.compiler.release`)
+- **Java Version**: JDK 25 minimum (set via `maven.compiler.source` and `maven.compiler.release`)
 - **Build System**: Maven-only (Ant build removed in Phase 1 migration)
 - **Build Properties**: External configuration loaded via properties-maven-plugin from `build.properties`
 - **Native Libraries**: HDF4/HDF5 native libraries required (paths configured in `build.properties`)
@@ -149,8 +149,8 @@ mvn test -pl hdfview -Dtest=TestClassName
 - **JaCoCo Plugin**: Code coverage analysis and reporting (60% line, 50% branch coverage targets)
 - **JavaDoc Plugin**: API documentation generation with multi-module aggregation
 - **Surefire Plugin**: JUnit 5 test execution with parallel test support
-- **PMD Plugin**: Static code analysis (v7.0+, JDK 25 compatible)
-- **Checkstyle Plugin**: Code style enforcement (v10.12+, JDK 25 compatible)
+- **PMD Plugin**: Static code analysis (v7.0+)
+- **Checkstyle Plugin**: Code style enforcement (v10.12+)
 - **OWASP Dependency Check**: Security vulnerability scanning
 - **License Plugin**: License compliance checking
 
