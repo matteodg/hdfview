@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments:
   - planning-artifacts/prds/prd-hdfview-2026-06-04/prd.md
   - planning-artifacts/prds/prd-hdfview-2026-06-04/addendum.md
@@ -12,6 +12,9 @@ workflowType: architecture
 project_name: hdfview
 user_name: Matteo
 date: 2026-06-04
+lastStep: 8
+status: complete
+completedAt: 2026-06-04
 ---
 
 # Architecture Decision Document
@@ -209,3 +212,120 @@ Agents could diverge on: mixing Phase 1/2 in one PR; FFM in `hdfview` vs `object
 - `@Disabled` UI tests without explicit FR-13 waiver
 - `install-file` jarhdf5 after repository removal
 - Linux Xvfb for SWT UI tests (documented as insufficient)
+
+## Project Structure & Boundaries
+
+### FR → structure mapping
+
+| FRs | Primary locations |
+|-----|-------------------|
+| FR-1, D-2 | `pom.xml`, `object/pom.xml`, `hdfview/pom.xml` |
+| FR-2, D-14 | Surefire/JVM in `object/pom.xml`, `hdfview/pom.xml` |
+| FR-3, D-23 | `hdfview/pom.xml` (jpackage), `run-hdfview.bat`, `run-hdfview.sh` |
+| FR-4, FR-13 | `object/src/test/`, `hdfview/src/test/java/uitest/` |
+| FR-5–FR-10 | `object/src/main/java/hdf/object/h5/`, `object/pom.xml`, root BOM |
+| FR-6, D-7 | Remove `repository/`; root `pom.xml` `<modules>` |
+| FR-8 | `object/.../h4/`, `build.properties` (`hdf.lib.dir`) |
+| FR-9 | `build.properties` template, enforcer/copy in `pom.xml` |
+| FR-11–FR-12 | `CLAUDE.md`, `project-context.md`, `.github/workflows/ci-*.yml` |
+
+### Phase 2 migration hotspots
+
+- `object/src/main/java/hdf/object/h5/` — core big-bang
+- `object/src/test/java/object/`, `object/src/test/java/misc/`
+- `hdfview/src/main/java/hdf/view/` — few direct HDF5 imports
+- `hdfview/src/test/java/uitest/` — mandatory UI gate (Windows)
+
+### Migration-relevant tree
+
+```
+hdfview/
+├── pom.xml
+├── build.properties              # Ph2: hdf.lib.dir only
+├── CLAUDE.md
+├── run-hdfview.bat / .sh
+├── scripts/build-dev.sh
+├── repository/                   # REMOVED Phase 2
+├── object/
+│   ├── pom.xml                   # org.hdfgroup deps (Ph2)
+│   └── src/main/java/hdf/object/h5/
+├── hdfview/
+│   ├── pom.xml
+│   ├── src/main/java/hdf/view/
+│   └── src/test/java/uitest/
+├── .github/workflows/
+│   ├── ci-windows.yml
+│   ├── ci-linux.yml
+│   └── ci-macos.yml
+└── docs/Testing-Guide.md
+```
+
+### Boundaries
+
+| Boundary | Rule |
+|----------|------|
+| HDF5 | `object` only → javahdf5/FFM; `hdfview` uses `hdf.object.*` |
+| HDF4 | `object.h4` + JNI via `hdf.lib.dir` |
+| UI | SWT in `hdfview` only |
+| Build | Phase 2: no `repository` install-file |
+
+**Data flow:** User → `hdf.view.HDFView` (SWT) → `hdf.object.*` → FFM (HDF5) / JNI (HDF4) → natives
+
+## Architecture Validation Results
+
+### Coherence validation
+
+**Decision compatibility:** Phased JDK-then-FFM ordering avoids mixing concerns. Dual natives (FFM HDF5 + JNI HDF4) is explicit. Windows-only classifiers align with Phase 2 CI split (D-20 vs D-21).
+
+**Pattern consistency:** Phase-tagged PRs, package boundaries, and enforcement rules match D-1–D-24.
+
+**Structure alignment:** FR mapping points to concrete paths; `repository` removal is reflected in tree.
+
+### Requirements coverage
+
+| FR | Architectural support |
+|----|------------------------|
+| FR-1–4 | D-2, D-11, D-13, D-14, D-17–D-19, D-23 |
+| FR-5–10 | D-4–D-9, D-6, D-10, D-20 |
+| FR-11–13 | D-17, D-22, D-24, patterns § |
+
+**NFRs:** Parity via UJ-1/UJ-2 + UI tests; reliability via build-time fail-fast; maintainability via BOM + Maven natives.
+
+### Implementation readiness
+
+**Ready for Phase 1** with high confidence. **Phase 2** requires pre-merge **API spike** (assumption in PRD §9) before big-bang.
+
+### Gap analysis
+
+| Priority | Gap | Mitigation |
+|----------|-----|------------|
+| Important | Phase 2 javahdf5 API spike not executed | Story 0 / spike before FR-7 merge |
+| Important | `build-windows.yml`, `publish-maven-packages.yml` may still reference `jarhdf5` | Audit in Phase 1 CI PR |
+| Minor | `project-context.md` still describes Java 21 + repository-first | D-24 end of Phase 1 |
+| Minor | Exact UI test class list per phase | Epics/stories |
+
+### Architecture completeness checklist
+
+**Requirements analysis:** [x] context [x] scale [x] constraints [x] cross-cutting
+
+**Architectural decisions:** [x] critical decisions [x] stack [x] integration [ ] performance (explicitly out of scope per PRD)
+
+**Implementation patterns:** [x] naming [x] structure [x] communication N/A desktop [x] process
+
+**Project structure:** [x] directories [x] boundaries [x] integration [x] FR mapping
+
+### Readiness assessment
+
+**Overall status:** **READY WITH MINOR GAPS**
+
+**Confidence:** High for Phase 1; Medium for Phase 2 until spike completes
+
+**Strengths:** Clear two-phase split; explicit CI strategy; brownfield boundaries preserved
+
+**Future enhancement:** Linux/macOS FFM classifiers; HDF4 FFM; JPMS
+
+### Implementation handoff
+
+**Agent guidelines:** Follow `architecture.md` + PRD FR IDs; Phase 1 before Phase 2; grep gates for `hdf.hdf5lib` in Phase 2.
+
+**First implementation priority:** Phase 1 Epic — bump `maven.compiler.release` to 25, update `ci-*.yml` JDK, fix launchers and `build-dev.sh`, run Windows UI tests, jpackage smoke.
