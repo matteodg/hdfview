@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4]
+stepsCompleted: [1, 2, 3, 4, 5]
 inputDocuments:
   - planning-artifacts/prds/prd-hdfview-2026-06-04/prd.md
   - planning-artifacts/prds/prd-hdfview-2026-06-04/addendum.md
@@ -162,3 +162,50 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 **Phase 2 sequence:** API spike → BOM/deps → remove repository → big-bang `hdf.object.h5` → hdfview imports → build.properties HDF5 removal → Windows CI FFM → UI + parity (UJ-2).
 
 **Dependencies:** D-7/D-8 require D-4–D-6 complete; D-21 depends on D-9; D-17 blocks both phase merges.
+
+## Implementation Patterns & Consistency Rules
+
+### Critical conflict points
+
+Agents could diverge on: mixing Phase 1/2 in one PR; FFM in `hdfview` vs `object`; leftover `hdf.hdf5lib`; reintroducing `repository` or `hdf5.lib.dir`; skipping Windows UI tests; false-green macOS/Linux CI after Phase 2.
+
+### Naming patterns
+
+| Area | Rule |
+|------|------|
+| HDF5 API (Phase 2) | `javahdf5` / org.hdfgroup types in `hdf.object.h5` only — **no** new `hdf.hdf5lib.*` |
+| Packages | `hdf.object.h5` (HDF5), `hdf.object.h4` (HDF4), `hdf.view.*` (SWT UI) |
+| BOM | Single `hdf5.stack.version=2.2.0`; no scattered version literals |
+| Tests | `uitest/` + `@Tag("ui")`; `object/` + `@Tag("unit")` / `@Tag("fast")` |
+
+### Structure patterns
+
+| Area | Rule |
+|------|------|
+| Phase 1 PRs | POMs, CI workflows, launchers, Testing Guide, Surefire JVM args — **no** h5 API migration |
+| Phase 2 PRs | BOM → delete `repository/` → migrate `object` h5 → fix `hdfview` imports → `build.properties` template |
+| Dependencies | `org.hdfgroup` in BOM + `object/pom.xml`; `windows-x86_64` via profile/property |
+
+### Process patterns
+
+| Area | Rule |
+|------|------|
+| Native errors | Fail at resolve/build when possible; UI uses existing dialogs — no silent native catch |
+| SWT | UI thread only (`syncExec` / `asyncExec`) |
+| Scope | Minimal diff; preserve copyright headers; Checkstyle/Google style |
+| Phase gate | `mvn test -pl object` + Windows `mvn test -pl hdfview` (UI) + UJ-1/UJ-2 smoke |
+
+### Enforcement (agents MUST)
+
+1. Read `architecture.md` + PRD FR for the story.
+2. Tag PR **Phase 1** or **Phase 2** in description.
+3. Phase 2: zero `hdf.hdf5lib` / `jarhdf5` references before merge.
+4. Update `project-context.md` when JVM args or `build.properties` contract changes.
+5. Do not lower JaCoCo thresholds to green migration PRs.
+
+### Anti-patterns
+
+- Temporary JNI adapter for HDF5 in Phase 2
+- `@Disabled` UI tests without explicit FR-13 waiver
+- `install-file` jarhdf5 after repository removal
+- Linux Xvfb for SWT UI tests (documented as insufficient)
