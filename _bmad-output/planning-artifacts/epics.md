@@ -1,5 +1,7 @@
 ---
-stepsCompleted: [1, 2, 3]
+stepsCompleted: [1, 2, 3, 4]
+status: complete
+completedAt: 2026-06-04
 inputDocuments:
   - planning-artifacts/prds/prd-hdfview-2026-06-04/prd.md
   - planning-artifacts/prds/prd-hdfview-2026-06-04/addendum.md
@@ -386,3 +388,17 @@ So that the migration is complete.
 | 2.7 | FR-12 (P2), FR-13 |
 | 2.8 | FR-12 (P2) |
 | 2.9 | FR-10, FR-11 |
+
+---
+
+## Validation (Step 4)
+
+**FR coverage:** All FR-1–FR-13 mapped to stories — pass.
+
+**Story quality:** Given/When/Then ACs; single-agent scope; no forward dependencies — pass.
+
+**Epic independence:** Epic 2 depends on Epic 1 merge only — pass.
+
+**Architecture alignment:** Phased delivery, spike before big-bang, CI split, brownfield — pass.
+
+**Ready for implementation:** Yes. Start with **Story 1.1**.
