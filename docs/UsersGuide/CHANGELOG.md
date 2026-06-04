@@ -1,5 +1,11 @@
 HDFView version 3.4.1
 
+## Unreleased
+
+### Breaking Changes
+
+* **JDK 25 required** — Building and running HDFView from source now requires Java 25 or later. Java 21 is no longer supported for development or CI.
+
 # 🔺 HDFView Changelog
 All notable changes to this project will be documented in this file. This document describes the differences between this release and the previous HDFView release, platforms tested, and known problems in this release.
 

@@ -13,7 +13,7 @@
 #   ./run-hdfview.sh --validate   # Just validate environment
 #
 # Requirements:
-#   - Java 21+
+#   - Java 25+
 #   - Maven 3.6+ (only for --maven mode)
 #   - HDF5 and HDF4 native libraries (configured in build.properties)
 #   - HDFView must be built before running this script
@@ -95,10 +95,10 @@ fi
 # Validate Java version
 print_status "Checking Java version..."
 JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
-if [[ "$JAVA_VERSION" -ge 21 ]]; then
-    print_success "Java $JAVA_VERSION detected (Java 21+ required)"
+if [[ "$JAVA_VERSION" -ge 25 ]]; then
+    print_success "Java $JAVA_VERSION detected (Java 25+ required)"
 else
-    print_error "Java 21+ required, found Java $JAVA_VERSION"
+    print_error "Java 25+ required, found Java $JAVA_VERSION"
     exit 1
 fi
 

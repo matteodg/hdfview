@@ -4,7 +4,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>PMD rules customized for HDFView project with Java 21 support</description>
+    <description>PMD rules customized for HDFView project with Java 25 support</description>
 
     <!-- Include standard rulesets with HDFView-specific exclusions -->
 
